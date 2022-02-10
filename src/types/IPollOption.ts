@@ -1,13 +1,13 @@
 export interface IPollOption {
-    /**
-     * Option text, 1-100 characters
-     */
+  /**
+   * Option text, 1-100 characters
+   */
 
-    text: string;
+  text: string;
 
-    /**
-     * Number of users that voted for this option
-     */
+  /**
+   * Number of users that voted for this option
+   */
 
-    voter_count: number;
+  voter_count: number;
 }
