@@ -1,6 +1,30 @@
 import { IChat } from "./IChat";
 import { IMessageEntity } from "./IMessageEntity";
 import { IUser } from "./IUser";
+import { IAnimation } from "./IIAnimation";
+import { IPhotoSize } from "./IIPhotoSize";
+import { IAudio } from "./IAudio";
+import { IDocument } from "./IDocument";
+import { ISticker } from "./ISticker";
+import { IVideo } from "./IVideo";
+import { IVideoNote } from "./IVideoNote";
+import { IVoice } from "./IVoice";
+import { IContact } from "./IContact";
+import { IDice } from "./IDice";
+import { IGame } from "./IGame";
+import { IPoll } from "./IPoll";
+import { IVenue } from "./IVenue";
+import { ILocation } from "./ILocation";
+import { IMessageAutoDeleteTimerChanged } from "./IMessageAutoDeleteTimerChanged";
+import { IInvoice } from "./IInvoice";
+import { ISuccessfulPayment } from "./ISuccessfulPayment";
+import { IPassportData } from "./IPassportData";
+import { IProximityAlertTriggered } from "./IProximityAlertTriggered";
+import { IVoiceChatScheduled } from "./IVoiceChatScheduled";
+import { IVoiceChatStarted } from "./IVoiceChatStarted";
+import { IVoiceChatEnded } from "./IVoiceChatEnded";
+import { IVoiceChatParticipantsInvited } from "./IVoiceChatParticipantsInvited";
+import { IInlineKeyboardMarkup } from "./IInlineKeyboardMarkup";
 
 export type Message = (message: IMessage) => void;
 

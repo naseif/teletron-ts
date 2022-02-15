@@ -37,7 +37,7 @@ export class TelegramAPI extends EventEmitter {
   async getUpdates(
     options?: IUpdateOptions,
     callback?: (updates: IUpdate[]) => void
-  ) {
+  ): Promise<IUpdate[]> {
     if (!options) {
       options = {};
       return await this.sendRequest(this.endpoint + "getUpdates");
