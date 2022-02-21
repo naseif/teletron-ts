@@ -1,4 +1,4 @@
-import { IOrderInfo } from "../../dist/types/IOrderInfo";
+import { IOrderInfo } from "./IOrderInfo";
 /**
  * This object contains basic information about a successful payment.
  */
