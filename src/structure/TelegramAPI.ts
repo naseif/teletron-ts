@@ -125,5 +125,16 @@ export class TelegramAPI extends EventEmitter {
     clearTimeout(this.timeout);
   }
 
-  async sendMessage() {}
+  async sendMessage(
+    cahtID: string,
+    text: string,
+    callback?: (message: IMessage) => void
+  ) {}
+
+  async sendPoll(
+    chat_id: string | number,
+    question: string,
+    options: string[],
+    callback?: (message: IMessage) => void
+  ) {}
 }
