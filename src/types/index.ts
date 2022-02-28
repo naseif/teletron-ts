@@ -49,3 +49,8 @@ export { IVoiceChatEnded } from "./IVoiceChatEnded";
 export { IVoiceChatParticipantsInvited } from "./IVoiceChatParticipantsInvited";
 export { IVoiceChatScheduled } from "./IVoiceChatScheduled";
 export { IVoiceChatStarted } from "./IVoiceChatStarted";
+export { IReplayKeyboardRemove } from "./IReplayKeyboardRemove";
+export { IReplyKeyboardMarkup } from "./IReplyKeyboardMarkup";
+export { IForceReply } from "./IForceReply";
+export { IKeyboardButton } from "./IKeyboardButton";
+export { IKeyboardButtonPollType } from "./IKeyboardButtonPollType";

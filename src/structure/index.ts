@@ -1,13 +1,24 @@
 export { TelegramAPI } from "./TelegramAPI";
 export {
-  IMessageCallback,
-  IInlineQueryCallback,
-  IChosenInlineResultCallback,
-  ICallbackQueryCallback,
-  IShippingQueryCallback,
-  IPreCheckoutQueryCallback,
-  IPollCallback,
-  IPollAnswerCallback,
-  OnError,
-  sendPollOptions,
+  TMessageCallback,
+  TInlineQueryCallback,
+  TChosenInlineResultCallback,
+  TCallbackQueryCallback,
+  TShippingQueryCallback,
+  TPreCheckoutQueryCallback,
+  TPollCallback,
+  TPollAnswerCallback,
+  TOnError,
+  IMessageId,
 } from "./types";
+
+export {
+  sendPollOptions,
+  sendMessageOptions,
+  forwardMessageOptions,
+  copyMessageOptions,
+  sendPhotoOptions,
+  sendAudioOptions,
+  sendVideoOptions,
+  sendDocumentOptions,
+} from "./methodsOptions";
