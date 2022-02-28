@@ -1,6 +1,4 @@
-import { IChat } from "./IChat";
-import { IChatInviteLink } from "./IChatInviteLink";
-import { IUser } from "./IUser";
+import { IChat, IChatInviteLink, IUser } from "./index";
 
 /**
  * Represents a join request sent to a chat.

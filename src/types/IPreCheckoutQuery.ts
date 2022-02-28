@@ -1,5 +1,4 @@
-import { IOrderInfo } from "./IOrderInfo";
-import { IUser } from "./IUser";
+import { IOrderInfo, IUser } from "./index";
 
 /**
  * This object contains information about an incoming pre-checkout query.

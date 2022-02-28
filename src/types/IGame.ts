@@ -1,6 +1,5 @@
-import { IAnimation } from "./IIAnimation";
-import { IPhotoSize } from "./IIPhotoSize";
-import { IMessageEntity } from "./IMessageEntity";
+import { IAnimation, IPhotoSize, IMessageEntity } from "./index";
+
 /**
  * This object represents a game. Use BotFather to create and edit games, their short names will act as unique identifiers.
  */

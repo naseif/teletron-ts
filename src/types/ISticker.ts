@@ -1,5 +1,4 @@
-import { IPhotoSize } from "./IIPhotoSize";
-import { IMaskPosition } from "./IMaskPosition";
+import { IPhotoSize, IMaskPosition } from "./index";
 /**
  * This object represents a sticker.
  */

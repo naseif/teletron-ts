@@ -1,5 +1,4 @@
-import { ILocation } from "./ILocation";
-import { IUser } from "./IUser";
+import { ILocation, IUser } from "./index";
 
 /**
  * This object represents an incoming inline query. When the user sends an empty query, your bot could return some default or trending results.

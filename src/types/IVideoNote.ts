@@ -1,4 +1,4 @@
-import { IPhotoSize } from "./IIPhotoSize";
+import { IPhotoSize } from "./IPhotoSize";
 
 /**
  * This object represents a video message (available in Telegram apps as of v.4.0).

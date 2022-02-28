@@ -1,7 +1,4 @@
-import { IChatLocation } from "./IChatLocation";
-import { IChatPermissions } from "./IChatPermission";
-import { IChatPhoto } from "./IChatPhoto";
-import { IMessage } from "./IMessage";
+import { IChatLocation, IChatPermissions, IChatPhoto, IMessage } from "./index";
 
 /**
  * This object represents a chat.

@@ -1,5 +1,4 @@
-import { IMessageEntity } from "./IMessageEntity";
-import { IPollOption } from "./IPollOption";
+import { IMessageEntity, IPollOption } from "./index";
 
 /**
  * This object contains information about a poll.

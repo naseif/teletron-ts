@@ -1,12 +1,14 @@
-import { ICallbackQuery } from "./ICallbackQuery";
-import { IChatJoinRequest } from "./IChatJoinRequest";
-import { IChosenInlineResult } from "./IChosenInlineResult";
-import { IInlineQuery } from "./IInlineQuery";
-import { IMessage } from "./IMessage";
-import { IPoll } from "./IPoll";
-import { IPollAnswer } from "./IPollAnswer";
-import { IPreCheckoutQuery } from "./IPreCheckoutQuery";
-import { IShippingQuery } from "./IShippingQuery";
+import {
+  ICallbackQuery,
+  IChatJoinRequest,
+  IChosenInlineResult,
+  IInlineQuery,
+  IMessage,
+  IPoll,
+  IPollAnswer,
+  IPreCheckoutQuery,
+  IShippingQuery,
+} from "./index";
 
 /**
  * This object represents an incoming update.
@@ -20,7 +22,7 @@ export interface IUpdate {
   /**
    * Optional. New incoming message of any kind — text, photo, sticker, etc.
    */
-  message?: IMessage;
+  message: IMessage;
   /**
    * Optional. New version of a message that is known to the bot and was edited
    */

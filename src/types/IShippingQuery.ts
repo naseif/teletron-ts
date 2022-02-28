@@ -1,5 +1,4 @@
-import { IShippingAddress } from "./IShippingAddress";
-import { IUser } from "./IUser";
+import { IShippingAddress, IUser } from "./index";
 
 /**
  * This object contains information about an incoming shipping query.

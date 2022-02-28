@@ -1,5 +1,4 @@
-import { IEncryptedCredentials } from "./IEncryptedCredentials";
-import { IEncryptedPassportElement } from "./IEncryptedPassportElement";
+import { IEncryptedCredentials, IEncryptedPassportElement } from "./index";
 
 /**
  * Contains information about Telegram Passport data shared with the bot by the user.

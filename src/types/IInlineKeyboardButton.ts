@@ -1,5 +1,4 @@
-import { ICallbackGame } from "./ICallbackGame";
-import { ILoginUrl } from "./ILoginUrl";
+import { ICallbackGame, ILoginUrl } from "./index";
 
 /**
  * This object represents one button of an inline keyboard. You must use exactly one of the optional fields.

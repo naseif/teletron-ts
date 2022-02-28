@@ -1,4 +1,4 @@
-import { IPhotoSize } from "./IIPhotoSize";
+import { IPhotoSize } from "./IPhotoSize";
 
 /**
  * This object represents a video file.
