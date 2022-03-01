@@ -5,6 +5,7 @@ import { IMessage } from "../types/IMessage";
 import { IUpdate } from "../types/IUpdate";
 import { IUpdateOptions } from "../types/IUpdateOptions";
 import { IUser } from "../types/IUser";
+import { sendVoiceOptions } from "./methodsOptions";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -14,6 +15,7 @@ import {
   sendAudioOptions,
   sendVideoOptions,
   sendDocumentOptions,
+  sendAnimationOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -109,14 +111,6 @@ export class TelegramAPI {
     const get = await fetch(`${apiMethod}`, params);
     const { result } = await get.json();
 
-    return result;
-  }
-
-  async getMe(callback?: (user: IUser) => void): Promise<IUser> {
-    let result: IUser;
-    const fetch = await this.sendRequest(this.endpoint + "getMe");
-    result = fetch;
-    if (callback) callback(result);
     return result;
   }
 
@@ -294,8 +288,17 @@ export class TelegramAPI {
   }
 
   /**
+   * A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a User object.
+   * @returns IUser
+   */
+  async getMe(): Promise<IUser> {
+    const fetch: IUser = await this.sendRequest(this.endpoint + "getMe");
+    return fetch;
+  }
+
+  /**
    * Use this method to send text messages. On success, the sent Message is returned.
-   * @param chatId Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chatId Unique identifier for the target chat or username of the target channel.
    * @param text Text of the message to be sent, 1-4096 characters after entities parsing
    * @param options sendMessageOptions
    * @returns IMessage
@@ -335,7 +338,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to send a native poll. On success, the sent Message is returned.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param question Poll question, 1-300 characters
    * @param answer_options A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
    * @param options sendPollOptions
@@ -375,8 +378,8 @@ export class TelegramAPI {
 
   /**
    * Use this method to forward messages of any kind. Service messages can't be forwarded. On success, the sent Message is returned.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
-   * @param from_chat_id Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
+   * @param from_chat_id Unique identifier for the chat where the original message was sent or channel username.
    * @param message_id Message identifier in the chat specified in from_chat_id
    * @param options forwardMessageOptions
    * @returns IMessage
@@ -419,7 +422,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to copy messages of any kind. Service messages and invoice messages can't be copied. The method is analogous to the method forwardMessage, but the copied message doesn't have a link to the original message. Returns the MessageId of the sent message on success.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param from_chat_id Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)
    * @param message_id Message identifier in the chat specified in from_chat_id
    * @param options copyMessageOptions
@@ -462,7 +465,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to send photos. On success, the sent Message is returned.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param photo Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More info on Sending Files »
    * @param options sendPhotoOptions
    * @returns IMessage
@@ -518,7 +521,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent Message is returned. Bots can currently send audio files of up to 50 MB in size
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param audio Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data.
    * @param options sendAudioOptions
    * @returns IMessage
@@ -574,7 +577,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as Document). On success, the sent Message is returned. Bots can currently send video files of up to 50 MB in size, this limit may be changed in the future.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param video Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data.
    * @param options sendVideoOptions
    * @returns
@@ -631,7 +634,7 @@ export class TelegramAPI {
 
   /**
    * Use this method to send general files. On success, the sent Message is returned. Bots can currently send files of any type of up to 50 MB in size.
-   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param document File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
    * @param options sendDocumentOptions
    * @returns IMessage
@@ -680,6 +683,118 @@ export class TelegramAPI {
 
     const send: IMessage = await this.sendRequest(
       this.endpoint + "sendDocument",
+      postOptions
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent Message is returned. Bots can currently send animation files of up to 50 MB in size.
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
+   * @param animation Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data.
+   * @param options sendAnimationOptions
+   */
+
+  async sendAnimation(
+    chat_id: string | number,
+    animation: Buffer | string,
+    options?: sendAnimationOptions
+  ) {
+    let params = {};
+    let postOptions = {};
+    let qs;
+
+    if (this.isReadableStream(animation)) {
+      params = {
+        chat_id: chat_id,
+        animation: animation,
+        ...options,
+      };
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+    } else {
+      if (options) {
+        params = {
+          chat_id: chat_id,
+          animation: animation,
+          ...options,
+        };
+      } else {
+        params = {
+          chat_id: chat_id,
+          animation: animation,
+        };
+      }
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+      };
+    }
+
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "sendAnimation",
+      postOptions
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size.
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
+   * @param voice Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+   * @param options
+   * @returns
+   */
+  async sendVoice(
+    chat_id: string | number,
+    voice: Buffer | string,
+    options?: sendVoiceOptions
+  ) {
+    let params = {};
+    let postOptions = {};
+    let qs;
+
+    if (this.isReadableStream(voice)) {
+      params = {
+        chat_id: chat_id,
+        voice: voice,
+        ...options,
+      };
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+    } else {
+      if (options) {
+        params = {
+          chat_id: chat_id,
+          voice: voice,
+          ...options,
+        };
+      } else {
+        params = {
+          chat_id: chat_id,
+          voice: voice,
+        };
+      }
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+      };
+    }
+
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "sendVoice",
       postOptions
     );
 
