@@ -23,4 +23,6 @@ export {
   sendDocumentOptions,
   sendAnimationOptions,
   sendVoiceOptions,
+  sendVideoNoteOptions,
+  sendMediaGroupOptions,
 } from "./methodsOptions";

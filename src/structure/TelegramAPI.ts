@@ -5,7 +5,7 @@ import { IMessage } from "../types/IMessage";
 import { IUpdate } from "../types/IUpdate";
 import { IUpdateOptions } from "../types/IUpdateOptions";
 import { IUser } from "../types/IUser";
-import { sendVoiceOptions } from "./methodsOptions";
+import { sendMediaGroupOptions, sendVoiceOptions } from "./methodsOptions";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -16,6 +16,7 @@ import {
   sendVideoOptions,
   sendDocumentOptions,
   sendAnimationOptions,
+  sendVideoNoteOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -29,6 +30,12 @@ import {
   TOnError,
   IMessageId,
 } from "./types";
+import {
+  IInputMediaAudio,
+  IInputMediaDocument,
+  IInputMediaPhoto,
+  IInputMediaVideo,
+} from "../types";
 
 export class TelegramAPI {
   /**
@@ -795,6 +802,109 @@ export class TelegramAPI {
 
     const send: IMessage = await this.sendRequest(
       this.endpoint + "sendVoice",
+      postOptions
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as Audio or Document). On success, the sent Message is returned. Bots can currently send voice messages of up to 50 MB in size.
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
+   * @param videoNote Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
+   * @param options
+   * @returns sendVideoNoteOptions
+   */
+  async sendVideoNote(
+    chat_id: string | number,
+    videoNote: Buffer | string,
+    options?: sendVideoNoteOptions
+  ): Promise<IMessage> {
+    let params = {};
+    let postOptions = {};
+    let qs;
+
+    if (this.isReadableStream(videoNote)) {
+      params = {
+        chat_id: chat_id,
+        video_note: videoNote,
+        ...options,
+      };
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+    } else {
+      if (options) {
+        params = {
+          chat_id: chat_id,
+          video_note: videoNote,
+          ...options,
+        };
+      } else {
+        params = {
+          chat_id: chat_id,
+          video_note: videoNote,
+        };
+      }
+      qs = this.qs(params);
+      postOptions = {
+        body: qs,
+        method: "POST",
+      };
+    }
+
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "sendVideoNote",
+      postOptions
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of Messages that were sent is returned.
+   * @param chat_id Unique identifier for the target chat or username of the target channel.
+   * @param media A JSON-serialized array describing messages to be sent, must include 2-10 items
+   * @param options
+   * @returns
+   */
+  async sendMediaGroup(
+    chat_id: number | string,
+    media:
+      | IInputMediaVideo[]
+      | IInputMediaPhoto[]
+      | IInputMediaDocument[]
+      | IInputMediaAudio[],
+    options?: sendMediaGroupOptions
+  ): Promise<IMessage> {
+    let params = {};
+    let postOptions = {};
+    let qs;
+
+    if (options) {
+      params = {
+        chat_id: chat_id,
+        media: media,
+        ...options,
+      };
+    } else {
+      params = {
+        chat_id: chat_id,
+        media: media,
+      };
+    }
+
+    qs = this.qs(params);
+    postOptions = {
+      body: qs,
+      method: "POST",
+    };
+
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "sendMediaGroup",
       postOptions
     );
 

@@ -54,3 +54,7 @@ export { IReplyKeyboardMarkup } from "./IReplyKeyboardMarkup";
 export { IForceReply } from "./IForceReply";
 export { IKeyboardButton } from "./IKeyboardButton";
 export { IKeyboardButtonPollType } from "./IKeyboardButtonPollType";
+export { IInputMediaAudio } from "./IInputMediaAudio";
+export { IInputMediaDocument } from "./IInputMediaDocument";
+export { IInputMediaPhoto } from "./IInputMediaPhoto";
+export { IInputMediaVideo } from "./IInputMediaVideo";
