@@ -887,13 +887,13 @@ export class TelegramAPI {
     if (options) {
       params = {
         chat_id: chat_id,
-        media: media,
+        media: JSON.stringify(media),
         ...options,
       };
     } else {
       params = {
         chat_id: chat_id,
-        media: media,
+        media: JSON.stringify(media),
       };
     }
 
@@ -907,6 +907,8 @@ export class TelegramAPI {
       this.endpoint + "sendMediaGroup",
       postOptions
     );
+
+    if (!send) throw new Error(`API CALL FAILED`);
 
     return send;
   }
