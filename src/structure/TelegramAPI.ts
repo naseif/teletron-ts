@@ -37,6 +37,9 @@ import {
   IInputMediaVideo,
 } from "../types";
 
+import FormData from "form-data";
+import { createReadStream } from "node:fs";
+
 export class TelegramAPI {
   /**
    * Telegram API token
@@ -479,24 +482,25 @@ export class TelegramAPI {
    */
   async sendPhoto(
     chat_id: string | number,
-    photo: Buffer | string,
+    photo: any,
     options?: sendPhotoOptions
   ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(photo)) {
-      params = {
-        chat_id: chat_id,
-        photo: photo,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("photo", photo);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -505,15 +509,13 @@ export class TelegramAPI {
           photo: photo,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          photo: photo,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        photo: photo,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -540,19 +542,20 @@ export class TelegramAPI {
   ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(audio)) {
-      params = {
-        chat_id: chat_id,
-        audio: audio,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("audio", audio);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -561,15 +564,13 @@ export class TelegramAPI {
           audio: audio,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          audio: audio,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        audio: audio,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -597,19 +598,20 @@ export class TelegramAPI {
   ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(video)) {
-      params = {
-        chat_id: chat_id,
-        video: video,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("video", video);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -624,9 +626,8 @@ export class TelegramAPI {
           video: video,
         };
       }
-      qs = this.qs(params);
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -654,19 +655,20 @@ export class TelegramAPI {
   ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(document)) {
-      params = {
-        chat_id: chat_id,
-        document: document,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("document", document);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -675,15 +677,13 @@ export class TelegramAPI {
           document: document,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          document: document,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        document: document,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -710,19 +710,20 @@ export class TelegramAPI {
   ) {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(animation)) {
-      params = {
-        chat_id: chat_id,
-        animation: animation,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("animation", animation);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -731,15 +732,13 @@ export class TelegramAPI {
           animation: animation,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          animation: animation,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        animation: animation,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -766,19 +765,20 @@ export class TelegramAPI {
   ) {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(voice)) {
-      params = {
-        chat_id: chat_id,
-        voice: voice,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("voice", voice);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -787,15 +787,13 @@ export class TelegramAPI {
           voice: voice,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          voice: voice,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        voice: voice,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
@@ -822,19 +820,20 @@ export class TelegramAPI {
   ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
-    let qs;
+    const form = new FormData();
 
     if (this.isReadableStream(videoNote)) {
-      params = {
-        chat_id: chat_id,
-        video_note: videoNote,
-        ...options,
-      };
-      qs = this.qs(params);
+      form.append("chat_id", chat_id);
+      form.append("video_note", videoNote);
+      if (options) {
+        for (const [key, value] of Object.entries(options)) {
+          form.append(key, value);
+        }
+      }
       postOptions = {
-        body: qs,
+        body: form,
         method: "POST",
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: form.getHeaders(),
       };
     } else {
       if (options) {
@@ -843,15 +842,13 @@ export class TelegramAPI {
           video_note: videoNote,
           ...options,
         };
-      } else {
-        params = {
-          chat_id: chat_id,
-          video_note: videoNote,
-        };
       }
-      qs = this.qs(params);
+      params = {
+        chat_id: chat_id,
+        video_note: videoNote,
+      };
       postOptions = {
-        body: qs,
+        body: this.qs(params),
         method: "POST",
       };
     }
