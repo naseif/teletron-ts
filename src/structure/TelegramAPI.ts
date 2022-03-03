@@ -38,6 +38,7 @@ import {
 } from "../types";
 
 import FormData from "form-data";
+import { ReadStream } from "node:fs";
 
 export class TelegramAPI {
   /**
@@ -481,7 +482,7 @@ export class TelegramAPI {
    */
   async sendPhoto(
     chat_id: string | number,
-    photo: Buffer | string,
+    photo: ReadStream | string,
     options?: sendPhotoOptions
   ): Promise<IMessage> {
     let params = {};
@@ -493,7 +494,7 @@ export class TelegramAPI {
       form.append("photo", photo);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -536,7 +537,7 @@ export class TelegramAPI {
    */
   async sendAudio(
     chat_id: string | number,
-    audio: Buffer | string,
+    audio: ReadStream | string,
     options?: sendAudioOptions
   ): Promise<IMessage> {
     let params = {};
@@ -546,9 +547,10 @@ export class TelegramAPI {
     if (this.isReadableStream(audio)) {
       form.append("chat_id", chat_id);
       form.append("audio", audio);
+      // TODO: When one of the options has a boolean value, FromData throws an exception for some reason, need to investigate this asap since its breaking the function
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -592,7 +594,7 @@ export class TelegramAPI {
 
   async sendVideo(
     chat_id: string,
-    video: Buffer | string,
+    video: ReadStream | string,
     options?: sendVideoOptions
   ): Promise<IMessage> {
     let params = {};
@@ -604,7 +606,7 @@ export class TelegramAPI {
       form.append("video", video);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -649,7 +651,7 @@ export class TelegramAPI {
 
   async sendDocument(
     chat_id: number | string,
-    document: Buffer | string,
+    document: ReadStream | string,
     options?: sendDocumentOptions
   ): Promise<IMessage> {
     let params = {};
@@ -661,7 +663,7 @@ export class TelegramAPI {
       form.append("document", document);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -704,7 +706,7 @@ export class TelegramAPI {
 
   async sendAnimation(
     chat_id: string | number,
-    animation: Buffer | string,
+    animation: ReadStream | string,
     options?: sendAnimationOptions
   ) {
     let params = {};
@@ -716,7 +718,7 @@ export class TelegramAPI {
       form.append("animation", animation);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -759,7 +761,7 @@ export class TelegramAPI {
    */
   async sendVoice(
     chat_id: string | number,
-    voice: Buffer | string,
+    voice: ReadStream | string,
     options?: sendVoiceOptions
   ) {
     let params = {};
@@ -771,7 +773,7 @@ export class TelegramAPI {
       form.append("voice", voice);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
@@ -814,7 +816,7 @@ export class TelegramAPI {
    */
   async sendVideoNote(
     chat_id: string | number,
-    videoNote: Buffer | string,
+    videoNote: ReadStream | string,
     options?: sendVideoNoteOptions
   ): Promise<IMessage> {
     let params = {};
@@ -826,7 +828,7 @@ export class TelegramAPI {
       form.append("video_note", videoNote);
       if (options) {
         for (const [key, value] of Object.entries(options)) {
-          form.append(key, value);
+          form.append(key, String(value));
         }
       }
       postOptions = {
