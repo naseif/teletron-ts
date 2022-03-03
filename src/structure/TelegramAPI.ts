@@ -38,7 +38,6 @@ import {
 } from "../types";
 
 import FormData from "form-data";
-import { createReadStream } from "node:fs";
 
 export class TelegramAPI {
   /**
@@ -482,7 +481,7 @@ export class TelegramAPI {
    */
   async sendPhoto(
     chat_id: string | number,
-    photo: any,
+    photo: Buffer | string,
     options?: sendPhotoOptions
   ): Promise<IMessage> {
     let params = {};
