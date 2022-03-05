@@ -517,3 +517,96 @@ export interface sendMediaGroupOptions {
    */
   allow_sending_without_reply?: boolean;
 }
+
+export interface sendLocationOptions {
+  /**
+   * The radius of uncertainty for the location, measured in meters; 0-1500
+   */
+  horizontal_accuracy?: number;
+  /**
+   * Period in seconds for which the location will be updated (see Live Locations, should be between 60 and 86400.
+   */
+  live_period?: number;
+  /**
+   * For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
+   */
+  heading?: number;
+  /**
+   * For live locations, a maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
+   */
+  proximity_alert_radius?: number;
+  /**
+   * Sends the message silently. Users will receive a notification with no sound.
+   */
+  disable_notification?: boolean;
+  /**
+   * Protects the contents of the sent message from forwarding and saving
+   */
+  protect_content?: boolean;
+  /**
+   * If the message is a reply, ID of the original message
+   */
+  reply_to_message_id?: number;
+  /**
+   * Pass True, if the message should be sent even if the specified replied-to message is not found
+   */
+  allow_sending_without_reply?: boolean;
+  /**
+   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+   */
+  reply_markup?:
+    | IInlineKeyboardMarkup
+    | IReplyKeyboardMarkup
+    | IReplayKeyboardRemove
+    | IForceReply;
+}
+
+export interface editMessageLiveLocationOptions {
+  /**
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format
+   */
+  chat_id?: number | string;
+  /**
+   * Required if inline_message_id is not specified. Identifier of the message to edit
+   */
+  message_id?: number;
+  /**
+   * Required if chat_id and message_id are not specified. Identifier of the inline message
+   */
+  inline_message_id?: string;
+  /**
+   * The radius of uncertainty for the location, measured in meters; 0-1500
+   */
+  horizontal_accuracy?: number;
+  /**
+   * Direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
+   */
+  heading?: number;
+  /**
+   * Maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
+   */
+  proximity_alert_radius?: number;
+  /**
+   * A JSON-serialized object for a new inline keyboard.
+   */
+  reply_markup?: IInlineKeyboardMarkup;
+}
+
+export interface stopMessageLiveLocationOptions {
+  /**
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel
+   */
+  chat_id?: number | string;
+  /**
+   * Required if inline_message_id is not specified. Identifier of the message with live location to stop
+   */
+  message_id?: number;
+  /**
+   * Required if chat_id and message_id are not specified. Identifier of the inline message
+   */
+  inline_message_id?: string;
+  /**
+   * A JSON-serialized object for a new inline keyboard.
+   */
+  reply_markup?: IInlineKeyboardMarkup;
+}

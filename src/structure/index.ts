@@ -25,4 +25,7 @@ export {
   sendVoiceOptions,
   sendVideoNoteOptions,
   sendMediaGroupOptions,
+  sendLocationOptions,
+  editMessageLiveLocationOptions,
+  stopMessageLiveLocationOptions,
 } from "./methodsOptions";

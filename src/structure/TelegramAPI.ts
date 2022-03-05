@@ -5,7 +5,13 @@ import { IMessage } from "../types/IMessage";
 import { IUpdate } from "../types/IUpdate";
 import { IUpdateOptions } from "../types/IUpdateOptions";
 import { IUser } from "../types/IUser";
-import { sendMediaGroupOptions, sendVoiceOptions } from "./methodsOptions";
+import {
+  editMessageLiveLocationOptions,
+  sendLocationOptions,
+  sendMediaGroupOptions,
+  sendVoiceOptions,
+  stopMessageLiveLocationOptions,
+} from "./methodsOptions";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -907,6 +913,119 @@ export class TelegramAPI {
     );
 
     if (!send) throw new Error(`API CALL FAILED`);
+
+    return send;
+  }
+
+  /**
+   * Use this method to send point on the map. On success, the sent Message is returned.
+   * @param chat_id  	Unique identifier for the target chat or username of the target channel
+   * @param latitude Latitude of the location
+   * @param longitude Longitude of the location
+   * @param options sendLocationOptions
+   * @returns IMessage[]
+   */
+  async sendLocation(
+    chat_id: string | number,
+    latitude: number,
+    longitude: number,
+    options?: sendLocationOptions
+  ): Promise<IMessage> {
+    let params = {};
+
+    if (options) {
+      params = {
+        chat_id: chat_id,
+        latitude: latitude,
+        longitude: longitude,
+        ...options,
+      };
+    } else {
+      params = {
+        chat_id: chat_id,
+        latitude: latitude,
+        longitude: longitude,
+      };
+    }
+
+    const qs = this.qs(params);
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "sendLocation",
+      {
+        body: qs,
+        method: "POST",
+      }
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled by a call to stopMessageLiveLocation. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+   * @param latitude Latitude of new location
+   * @param longitude Longitude of new location
+   * @param options editMessageLiveLocationOptions
+   * @returns IMessage | boolean
+   */
+
+  async editMessageLiveLocation(
+    latitude: number,
+    longitude: number,
+    options?: editMessageLiveLocationOptions
+  ): Promise<boolean | IMessage> {
+    let params = {};
+
+    if (options) {
+      params = {
+        latitude: latitude,
+        longitude: longitude,
+        ...options,
+      };
+    } else {
+      params = {
+        latitude: latitude,
+        longitude: longitude,
+      };
+    }
+
+    const qs = this.qs(params);
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "editMessageLiveLocation",
+      {
+        body: qs,
+        method: "POST",
+      }
+    );
+
+    return send;
+  }
+
+  /**
+   * Use this method to stop updating a live location message before live_period expires. On success, if the message is not an inline message, the edited Message is returned, otherwise True is returned.
+   * @param options stopMessageLiveLocationOptions
+   * @returns IMessage | boolean
+   */
+
+  async stopMessageLiveLocation(
+    options?: stopMessageLiveLocationOptions
+  ): Promise<boolean | IMessage> {
+    let params = {};
+
+    if (options) {
+      params = {
+        ...options,
+      };
+    }
+
+    let qs = this.qs(params);
+
+    const send: IMessage = await this.sendRequest(
+      this.endpoint + "stopMessageLiveLocation",
+      {
+        body: qs,
+        method: "POST",
+      }
+    );
 
     return send;
   }
