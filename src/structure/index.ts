@@ -10,6 +10,7 @@ export {
   TPollAnswerCallback,
   TOnError,
   IMessageId,
+  LocalFile,
 } from "./types";
 
 export {
