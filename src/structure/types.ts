@@ -21,6 +21,17 @@ export type TPollCallback = (poll: IPoll) => void;
 export type TPollAnswerCallback = (poll_answer: IPollAnswer) => void;
 export type TOnError = (error: any) => void;
 
+export interface LocalFile {
+  /**
+   * Path string to the local file
+   */
+  file: string;
+  /**
+   * Optional, The type content of the file.
+   */
+  content_type?: string;
+}
+
 /**
  * This object represents a unique message identifier.
  */

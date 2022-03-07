@@ -6,7 +6,34 @@ import {
   IReplyKeyboardMarkup,
 } from "../types/index";
 
-export interface sendPollOptions {
+export interface OptionsBase {
+  /**
+   * Sends the message silently. Users will receive a notification with no sound.
+   */
+  disable_notification?: boolean;
+  /**
+   * Protects the contents of the sent message from forwarding and saving
+   */
+  protect_content?: boolean;
+  /**
+   * If the message is a reply, ID of the original message
+   */
+  reply_to_message_id?: number;
+  /**
+   * Pass True, if the message should be sent even if the specified replied-to message is not found
+   */
+  allow_sending_without_reply?: boolean;
+  /**
+   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+   */
+  reply_markup?:
+    | IInlineKeyboardMarkup
+    | IReplyKeyboardMarkup
+    | IReplayKeyboardRemove
+    | IForceReply;
+}
+
+export interface sendPollOptions extends OptionsBase {
   /**
    * True, if the poll needs to be anonymous, defaults to True
    */
@@ -47,33 +74,9 @@ export interface sendPollOptions {
    * Pass True, if the poll needs to be immediately closed. This can be useful for poll preview.
    */
   is_closed?: boolean;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendMessageOptions {
+export interface sendMessageOptions extends OptionsBase {
   /**
    * Mode for parsing entities in the message text. See formatting options for more details.
    */
@@ -82,34 +85,6 @@ export interface sendMessageOptions {
    * A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
    */
   entities?: IMessageEntity[];
-  /**
-   * Disables link previews for links in this message
-   */
-  disable_web_page_preview?: boolean;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
 export interface forwardMessageOptions {
@@ -123,7 +98,7 @@ export interface forwardMessageOptions {
   protect_content?: boolean;
 }
 
-export interface copyMessageOptions {
+export interface copyMessageOptions extends OptionsBase {
   /**
    * New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept
    */
@@ -136,33 +111,9 @@ export interface copyMessageOptions {
    * A JSON-serialized list of special entities that appear in the new caption, which can be specified instead of parse_mode
    */
   caption_entities?: IMessageEntity[];
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendPhotoOptions {
+export interface sendPhotoOptions extends OptionsBase {
   /**
    * Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing
    */
@@ -175,33 +126,9 @@ export interface sendPhotoOptions {
    * A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
    */
   caption_entities?: IMessageEntity[];
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendAudioOptions {
+export interface sendAudioOptions extends OptionsBase {
   /**
    * Audio caption, 0-1024 characters after entities parsing
    */
@@ -230,33 +157,9 @@ export interface sendAudioOptions {
    * Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>
    */
   thumb?: Buffer | string;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendVideoOptions {
+export interface sendVideoOptions extends OptionsBase {
   /**
    * Duration of sent video in seconds
    */
@@ -286,36 +189,12 @@ export interface sendVideoOptions {
    */
   caption_entities?: IMessageEntity[];
   /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
    * Pass True, if the uploaded video is suitable for streaming
    */
   supports_streaming?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendDocumentOptions {
+export interface sendDocumentOptions extends OptionsBase {
   /**
    * Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>.
    */
@@ -336,33 +215,9 @@ export interface sendDocumentOptions {
    * Disables automatic server-side content type detection for files uploaded using multipart/form-data
    */
   disable_content_type_detection?: boolean;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendAnimationOptions {
+export interface sendAnimationOptions extends OptionsBase {
   /**
    * Duration of sent animation in seconds
    */
@@ -391,33 +246,9 @@ export interface sendAnimationOptions {
    * A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
    */
   caption_entities: IMessageEntity[];
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendVoiceOptions {
+export interface sendVoiceOptions extends OptionsBase {
   /**
    * Duration of the voice message in seconds
    */
@@ -434,33 +265,9 @@ export interface sendVoiceOptions {
    * A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode
    */
   caption_entities: IMessageEntity[];
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
-export interface sendVideoNoteOptions {
+export interface sendVideoNoteOptions extends OptionsBase {
   /**
    * Duration of sent video in seconds
    */
@@ -473,30 +280,6 @@ export interface sendVideoNoteOptions {
    * Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>.
    */
   thumb?: Buffer | string;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
 export interface sendMediaGroupOptions {
@@ -518,7 +301,7 @@ export interface sendMediaGroupOptions {
   allow_sending_without_reply?: boolean;
 }
 
-export interface sendLocationOptions {
+export interface sendLocationOptions extends OptionsBase {
   /**
    * The radius of uncertainty for the location, measured in meters; 0-1500
    */
@@ -535,30 +318,6 @@ export interface sendLocationOptions {
    * For live locations, a maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.
    */
   proximity_alert_radius?: number;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
 
 export interface editMessageLiveLocationOptions {
@@ -611,7 +370,7 @@ export interface stopMessageLiveLocationOptions {
   reply_markup?: IInlineKeyboardMarkup;
 }
 
-export interface sendVenueOptions {
+export interface sendVenueOptions extends OptionsBase {
   /**
    * Foursquare identifier of the venue.
    */
@@ -629,28 +388,4 @@ export interface sendVenueOptions {
    * @see Supported Types  https://developers.google.com/maps/documentation/places/web-service/supported_types
    */
   google_place_type?: string;
-  /**
-   * Sends the message silently. Users will receive a notification with no sound.
-   */
-  disable_notification?: boolean;
-  /**
-   * Protects the contents of the sent message from forwarding and saving
-   */
-  protect_content?: boolean;
-  /**
-   * If the message is a reply, ID of the original message
-   */
-  reply_to_message_id?: number;
-  /**
-   * Pass True, if the message should be sent even if the specified replied-to message is not found
-   */
-  allow_sending_without_reply?: boolean;
-  /**
-   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
-   */
-  reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply;
 }
