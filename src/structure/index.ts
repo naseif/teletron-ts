@@ -29,4 +29,5 @@ export {
   sendLocationOptions,
   editMessageLiveLocationOptions,
   stopMessageLiveLocationOptions,
+  sendVenueOptions,
 } from "./methodsOptions";

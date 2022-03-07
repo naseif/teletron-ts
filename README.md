@@ -1,2 +1,3 @@
 # node-telegram-api
-Telegram Bot API for Node.js written in TypeScript.
+
+Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.
