@@ -1,4 +1,6 @@
 import EventEmitter from "eventemitter3";
+import FormData from "form-data";
+import { ReadStream } from "node:fs";
 import fetch, { RequestInit } from "node-fetch";
 import { URLSearchParams } from "node:url";
 import { IMessage } from "../types/IMessage";
@@ -9,6 +11,7 @@ import {
   editMessageLiveLocationOptions,
   sendLocationOptions,
   sendMediaGroupOptions,
+  sendVenueOptions,
   sendVoiceOptions,
   stopMessageLiveLocationOptions,
 } from "./methodsOptions";
@@ -42,9 +45,6 @@ import {
   IInputMediaPhoto,
   IInputMediaVideo,
 } from "../types";
-
-import FormData from "form-data";
-import { ReadStream } from "node:fs";
 
 export class TelegramAPI {
   /**
@@ -763,13 +763,13 @@ export class TelegramAPI {
    * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param voice Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data.
    * @param options
-   * @returns
+   * @returns IMessage
    */
   async sendVoice(
     chat_id: string | number,
     voice: ReadStream | string,
     options?: sendVoiceOptions
-  ) {
+  ): Promise<IMessage> {
     let params = {};
     let postOptions = {};
     const form = new FormData();
@@ -872,9 +872,10 @@ export class TelegramAPI {
    * Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of Messages that were sent is returned.
    * @param chat_id Unique identifier for the target chat or username of the target channel.
    * @param media A JSON-serialized array describing messages to be sent, must include 2-10 items
-   * @param options
-   * @returns
+   * @param options sendMediaGroupOptions
+   * @returns IMessage
    */
+
   async sendMediaGroup(
     chat_id: number | string,
     media:
@@ -925,6 +926,7 @@ export class TelegramAPI {
    * @param options sendLocationOptions
    * @returns IMessage[]
    */
+
   async sendLocation(
     chat_id: string | number,
     latitude: number,
@@ -1026,6 +1028,55 @@ export class TelegramAPI {
         method: "POST",
       }
     );
+
+    return send;
+  }
+
+  /**
+   * Use this method to send information about a venue. On success, the sent Message is returned.
+   * @param chat_id Unique identifier for the target chat or username of the target channel
+   * @param latitude Latitude of the venue
+   * @param longitude Longitude of the venue
+   * @param title Name of the venue
+   * @param address Address of the venue
+   * @param options sendVenueOptions
+   * @returns IMessage
+   */
+
+  async sendVenue(
+    chat_id: string | number,
+    latitude: number,
+    longitude: number,
+    title: string,
+    address: string,
+    options?: sendVenueOptions
+  ): Promise<IMessage> {
+    let params = {};
+
+    if (options) {
+      params = {
+        chat_id: chat_id,
+        latitude: latitude,
+        longitude: longitude,
+        title: title,
+        address: address,
+        ...options,
+      };
+    } else {
+      params = {
+        chat_id: chat_id,
+        latitude: latitude,
+        longitude: longitude,
+        title: title,
+        address: address,
+      };
+    }
+
+    const qs = this.qs(params);
+    const send: IMessage = await this.sendRequest(this.endpoint + "sendVenue", {
+      body: qs,
+      method: "POST",
+    });
 
     return send;
   }

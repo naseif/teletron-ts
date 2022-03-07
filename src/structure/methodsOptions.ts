@@ -610,3 +610,47 @@ export interface stopMessageLiveLocationOptions {
    */
   reply_markup?: IInlineKeyboardMarkup;
 }
+
+export interface sendVenueOptions {
+  /**
+   * Foursquare identifier of the venue.
+   */
+  foursquare_id?: string;
+  /**
+   * Foursquare type of the venue, if known. (For example, “arts_entertainment/default”, “arts_entertainment/aquarium” or “food/icecream”.)
+   */
+  foursquare_type?: string;
+  /**
+   * Google Places identifier of the venue
+   */
+  google_place_id?: string;
+  /**
+   * Google Places type of the venue.
+   * @see Supported Types  https://developers.google.com/maps/documentation/places/web-service/supported_types
+   */
+  google_place_type?: string;
+  /**
+   * Sends the message silently. Users will receive a notification with no sound.
+   */
+  disable_notification?: boolean;
+  /**
+   * Protects the contents of the sent message from forwarding and saving
+   */
+  protect_content?: boolean;
+  /**
+   * If the message is a reply, ID of the original message
+   */
+  reply_to_message_id?: number;
+  /**
+   * Pass True, if the message should be sent even if the specified replied-to message is not found
+   */
+  allow_sending_without_reply?: boolean;
+  /**
+   * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+   */
+  reply_markup?:
+    | IInlineKeyboardMarkup
+    | IReplyKeyboardMarkup
+    | IReplayKeyboardRemove
+    | IForceReply;
+}
