@@ -44,6 +44,7 @@ import {
   ActionType,
 } from "./types";
 import {
+  IBotCommand,
   IFile,
   IInputMediaAudio,
   IInputMediaDocument,
@@ -1139,6 +1140,35 @@ export class TelegramAPI {
       await this.sendRequest("post", this.endpoint + "getFile", {
         file_id: file_id,
       })
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to change the list of the bot's commands. for more details about bot commands. Returns True on success.
+   * @see https://core.telegram.org/bots#commands
+   * @param commands A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
+   * @returns boolean
+   */
+
+  async setMyCommands(commands: IBotCommand[]): Promise<boolean> {
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "setMyCommands", {
+        commands: JSON.stringify(commands),
+      })
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, higher level commands will be shown to affected users. Returns True on success.
+   * @returns boolean
+   */
+  async deleteMyCommands() {
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "deleteMyCommands", {})
     ).result;
 
     return send;

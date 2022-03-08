@@ -418,3 +418,5 @@ export interface getUserProfilePhotosOptions {
    */
   limit?: number;
 }
+
+export interface setMyCommandsOptions {}
