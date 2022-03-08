@@ -4,6 +4,7 @@ Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.
 
 ## Features
 
+- Full Telegram Bot API 5.7 support
 - Object-oriented
 - Full types support
 - Asynchronous
@@ -45,7 +46,7 @@ const telegram = new TelegramAPI("token"); // bot token api
 
 telegram.onMessage(async (message) => {
   if (message.text === "Hi")
-    await telegram.sendMessage(message.chat.id, "Hi there!"); // sendMessage will return an instance on IMessage
+    await telegram.sendMessage(message.chat.id, "Hi there!"); // sendMessage will return an instance of IMessage
 });
 
 // fetch new updates from the api

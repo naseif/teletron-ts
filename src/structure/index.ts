@@ -11,6 +11,7 @@ export {
   TOnError,
   IMessageId,
   LocalFile,
+  ActionType,
 } from "./types";
 
 export {
