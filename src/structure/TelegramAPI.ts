@@ -8,6 +8,9 @@ import { IUpdateOptions } from "../types/IUpdateOptions";
 import { IUser } from "../types/IUser";
 import {
   editMessageLiveLocationOptions,
+  getUserProfilePhotosOptions,
+  sendContactOptions,
+  sendDiceOptions,
   sendLocationOptions,
   sendMediaGroupOptions,
   sendVenueOptions,
@@ -38,12 +41,15 @@ import {
   TOnError,
   IMessageId,
   LocalFile,
+  ActionType,
 } from "./types";
 import {
+  IFile,
   IInputMediaAudio,
   IInputMediaDocument,
   IInputMediaPhoto,
   IInputMediaVideo,
+  IUserProfilePhotos,
 } from "../types";
 
 export class TelegramAPI {
@@ -259,7 +265,11 @@ export class TelegramAPI {
   async getUpdates(options?: IUpdateOptions) {
     if (!options) {
       options = {};
-      return this.sendRequest("get", this.endpoint + "getUpdates", options);
+      return await this.sendRequest(
+        "get",
+        this.endpoint + "getUpdates",
+        options
+      );
     }
 
     const qs = new URLSearchParams();
@@ -306,7 +316,7 @@ export class TelegramAPI {
    * @returns IUser
    */
   async getMe(): Promise<IUser> {
-    const fetch: IUser = (
+    const fetch: IUser = await (
       await this.sendRequest("get", this.endpoint + "getMe", {})
     ).result;
     return fetch;
@@ -338,7 +348,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "sendMessage", params)
     ).result;
 
@@ -376,7 +386,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "sendPoll", params)
     ).result;
 
@@ -410,7 +420,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "forwardMessage", params)
     ).result;
 
@@ -445,7 +455,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessageId = (
+    const send: IMessageId = await (
       await this.sendRequest("post", this.endpoint + "copyMessage", params)
     ).result;
 
@@ -499,7 +509,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendPhoto", params, {
         multipart: true,
       })
@@ -553,7 +563,7 @@ export class TelegramAPI {
     }
 
     let result: IMessage;
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendAudio", params, {
         multipart: true,
       })
@@ -609,7 +619,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendVideo", params, {
         multipart: true,
       })
@@ -665,7 +675,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendDocument", params, {
         multipart: true,
       })
@@ -721,7 +731,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendAnimation", params, {
         multipart: true,
       })
@@ -777,7 +787,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendVoice", params, {
         multipart: true,
       })
@@ -830,7 +840,7 @@ export class TelegramAPI {
 
     let result: IMessage;
 
-    result = (
+    result = await (
       await this.sendRequest("post", this.endpoint + "sendVideoNote", params, {
         multipart: true,
       })
@@ -881,7 +891,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "sendMediaGroup", params, {
         multipart: true,
       })
@@ -916,7 +926,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "sendLocation", params)
     ).result;
 
@@ -942,7 +952,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest(
         "post",
         this.endpoint + "editMessageLiveLocation",
@@ -966,7 +976,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest(
         "post",
         this.endpoint + "stopMessageLiveLocation",
@@ -1008,8 +1018,127 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = (
+    const send: IMessage = await (
       await this.sendRequest("post", this.endpoint + "sendVenue", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to send phone contacts. On success, the sent Message is returned.
+   * @param chat_id Unique identifier for the target chat or username of the target channel
+   * @param phone_number Contact's phone number
+   * @param first_name Contact's first name
+   * @param options sendContactOptions
+   * @returns IMessage
+   * ```ts
+   *  // this will send a phone contact in the specified chat.
+   *  await TelegramAPI.sendContact(message.chat.id, "3216513215", "Bob")
+   * ```
+   */
+
+  async sendContact(
+    chat_id: string | number,
+    phone_number: string,
+    first_name: string,
+    options?: sendContactOptions
+  ): Promise<IMessage> {
+    let params = {
+      chat_id: chat_id,
+      phone_number: phone_number,
+      first_name: first_name,
+      ...options,
+    };
+
+    const send: IMessage = await (
+      await this.sendRequest("post", this.endpoint + "sendContact", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to send an animated emoji that will display a random value. On success, the sent Message is returned.
+   * @param chat_id Unique identifier for the target chat or username of the target channel
+   * @param options sendDiceOptions
+   * @returns IMessage
+   */
+
+  async sendDice(
+    chat_id: string | number,
+    options?: sendDiceOptions
+  ): Promise<IMessage> {
+    let params = {
+      chat_id: chat_id,
+      ...options,
+    };
+
+    const send: IMessage = await (
+      await this.sendRequest("post", this.endpoint + "sendDice", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel
+   * @param action ActionType
+   * @returns boolean
+   */
+
+  async sendChatAction(chat_id: number | string, action: ActionType) {
+    let params = {
+      chat_id: chat_id,
+      action: action,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "sendChatAction", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get a list of profile pictures for a user. Returns a IUserProfilePhotos object.
+   * @param user_id Unique identifier of the target user
+   * @param options getUserProfilePhotosOptions
+   * @returns IUserProfilePhotos
+   */
+
+  async getUserProfilePhotos(
+    user_id: number,
+    options?: getUserProfilePhotosOptions
+  ): Promise<IUserProfilePhotos> {
+    let params = {
+      user_id: user_id,
+      ...options,
+    };
+
+    const send: IUserProfilePhotos = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getUserProfilePhotos",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>, where <file_path> is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile
+   * @param file_id File identifier to get info about
+   * @returns IFile
+   */
+
+  async getFile(file_id: string): Promise<IFile> {
+    const send: IFile = await (
+      await this.sendRequest("post", this.endpoint + "getFile", {
+        file_id: file_id,
+      })
     ).result;
 
     return send;

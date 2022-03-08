@@ -21,6 +21,19 @@ export type TPollCallback = (poll: IPoll) => void;
 export type TPollAnswerCallback = (poll_answer: IPollAnswer) => void;
 export type TOnError = (error: any) => void;
 
+export type ActionType =
+  | "typing"
+  | "upload_photo"
+  | "record_video"
+  | "upload_video"
+  | "record_voice"
+  | "upload_voice"
+  | "upload_document"
+  | "choose_sticker"
+  | "find_location"
+  | "record_video_note"
+  | "upload_video_note";
+
 export interface LocalFile {
   /**
    * Path string to the local file

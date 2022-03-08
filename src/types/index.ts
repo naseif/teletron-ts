@@ -58,3 +58,5 @@ export { IInputMediaAudio } from "./IInputMediaAudio";
 export { IInputMediaDocument } from "./IInputMediaDocument";
 export { IInputMediaPhoto } from "./IInputMediaPhoto";
 export { IInputMediaVideo } from "./IInputMediaVideo";
+export { IUserProfilePhotos } from "./IUserProfilePhotos";
+export { IFile } from "./IFile";

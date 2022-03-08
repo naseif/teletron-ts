@@ -389,3 +389,32 @@ export interface sendVenueOptions extends OptionsBase {
    */
   google_place_type?: string;
 }
+export interface sendContactOptions extends OptionsBase {
+  /**
+   * Contact's last name
+   */
+  last_name?: string;
+  /**
+   * Additional data about the contact in the form of a vCard, 0-2048 bytes
+   * @see https://en.wikipedia.org/wiki/VCard
+   */
+  vcard?: string;
+}
+
+export interface sendDiceOptions extends OptionsBase {
+  /**
+   * Emoji on which the dice throw animation is based. Currently, must be one of “🎲”, “🎯”, “🏀”, “⚽”, “🎳”, or “🎰”. Dice can have values 1-6 for “🎲”, “🎯” and “🎳”, values 1-5 for “🏀” and “⚽”, and values 1-64 for “🎰”. Defaults to “🎲”
+   */
+  emoji?: string;
+}
+
+export interface getUserProfilePhotosOptions {
+  /**
+   * Sequential number of the first photo to be returned. By default, all photos are returned.
+   */
+  offset?: number;
+  /**
+   * Limits the number of photos to be retrieved. Values between 1-100 are accepted. Defaults to 100.
+   */
+  limit?: number;
+}

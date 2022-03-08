@@ -30,4 +30,7 @@ export {
   editMessageLiveLocationOptions,
   stopMessageLiveLocationOptions,
   sendVenueOptions,
+  sendContactOptions,
+  sendDiceOptions,
+  getUserProfilePhotosOptions,
 } from "./methodsOptions";
