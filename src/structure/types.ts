@@ -1,11 +1,14 @@
-import { ICallbackQuery } from "../types/ICallbackQuery";
-import { IChosenInlineResult } from "../types/IChosenInlineResult";
-import { IInlineQuery } from "../types/IInlineQuery";
-import { IMessage } from "../types/IMessage";
-import { IPoll } from "../types/IPoll";
-import { IPollAnswer } from "../types/IPollAnswer";
-import { IPreCheckoutQuery } from "../types/IPreCheckoutQuery";
-import { IShippingQuery } from "../types/IShippingQuery";
+import {
+  IShippingQuery,
+  IPreCheckoutQuery,
+  IPollAnswer,
+  IPoll,
+  IMessage,
+  IInlineQuery,
+  IChosenInlineResult,
+  ICallbackQuery,
+  IChatJoinRequest,
+} from "../types";
 
 export type TMessageCallback = (message: IMessage) => void;
 export type TInlineQueryCallback = (in_line_query: IInlineQuery) => void;
@@ -53,4 +56,18 @@ export interface IMessageId {
    * Unique message identifier
    */
   message_id: number;
+}
+
+export interface TelegramEvents {
+  message: [message: IMessage];
+  edited_message: [message: IMessage];
+  edited_channel_post: [message: IMessage];
+  channel_post: [message: IMessage];
+  inline_query: [message: IInlineQuery];
+  chosen_inline_result: [message: IChosenInlineResult];
+  callback_query: [query: ICallbackQuery];
+  shipping_query: [query: IShippingQuery];
+  poll: [poll: IPoll];
+  poll_answer: [pollAnswer: IPollAnswer];
+  chat_join_request: [request: IChatJoinRequest];
 }

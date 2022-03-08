@@ -2,21 +2,7 @@ import EventEmitter from "eventemitter3";
 import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
 import mime from "mime-types";
 import { URLSearchParams } from "node:url";
-import { IMessage } from "../types/IMessage";
-import { IUpdate } from "../types/IUpdate";
-import { IUpdateOptions } from "../types/IUpdateOptions";
-import { IUser } from "../types/IUser";
-import {
-  editMessageLiveLocationOptions,
-  getUserProfilePhotosOptions,
-  sendContactOptions,
-  sendDiceOptions,
-  sendLocationOptions,
-  sendMediaGroupOptions,
-  sendVenueOptions,
-  sendVoiceOptions,
-  stopMessageLiveLocationOptions,
-} from "./methodsOptions";
+import { IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -27,6 +13,15 @@ import {
   sendVideoOptions,
   sendDocumentOptions,
   sendAnimationOptions,
+  editMessageLiveLocationOptions,
+  getUserProfilePhotosOptions,
+  sendContactOptions,
+  sendDiceOptions,
+  sendLocationOptions,
+  sendMediaGroupOptions,
+  sendVenueOptions,
+  sendVoiceOptions,
+  stopMessageLiveLocationOptions,
   sendVideoNoteOptions,
 } from "./index";
 import {
@@ -42,8 +37,11 @@ import {
   IMessageId,
   LocalFile,
   ActionType,
+  TelegramEvents,
 } from "./types";
+
 import {
+  IBotCommand,
   IFile,
   IInputMediaAudio,
   IInputMediaDocument,
@@ -213,51 +211,65 @@ export class TelegramAPI {
       let preCheckoutQuery = update.pre_checkout_query;
       let pollQuery = update.poll;
       let pollAnswerQuery = update.poll_answer;
+      let chatJoinReq = update.chat_join_request;
 
       if (message) {
+        this.emitter.emit("message", message);
         if (this.onMessageCallback !== undefined) {
           this.onMessageCallback(message);
         }
       } else if (editedMessage) {
+        this.emitter.emit("edited_message", editedMessage);
         if (this.onEditedMessageCallback !== undefined) {
           this.onEditedMessageCallback(editedMessage);
         }
       } else if (channelPost) {
+        this.emitter.emit("channel_post", channelPost);
         if (this.onChannelPostCallback !== undefined) {
           this.onChannelPostCallback(channelPost);
         }
       } else if (editedChannelPost) {
+        this.emitter.emit("edited_channel_post", editedChannelPost);
         if (this.onEditedChannelPostCallback !== undefined) {
           this.onEditedChannelPostCallback(editedChannelPost);
         }
       } else if (callbackQuery) {
+        this.emitter.emit("callback_query", callbackQuery);
         if (this.onCallbackQueryCallback !== undefined) {
           this.onCallbackQueryCallback(callbackQuery);
         }
       } else if (inlineQuery) {
+        this.emitter.emit("inline_query", inlineQuery);
         if (this.onInlineQueryCallback !== undefined) {
           this.onInlineQueryCallback(inlineQuery);
         }
       } else if (chosenInlineResult) {
+        this.emitter.emit("chosen_inline_result", chosenInlineResult);
         if (this.onChosenInlineResultCallback !== undefined) {
           this.onChosenInlineResultCallback(chosenInlineResult);
         }
       } else if (shippingQuery) {
+        this.emitter.emit("shipping_query", shippingQuery);
         if (this.onShippingQueryCallback !== undefined) {
           this.onShippingQueryCallback(shippingQuery);
         }
       } else if (preCheckoutQuery) {
+        this.emitter.emit("pre_checkout_query", preCheckoutQuery);
         if (this.onPreCheckoutQueryCallback !== undefined) {
           this.onPreCheckoutQueryCallback(preCheckoutQuery);
         }
       } else if (pollQuery) {
+        this.emitter.emit("poll", pollQuery);
         if (this.onPollCallback !== undefined) {
           this.onPollCallback(pollQuery);
         }
       } else if (pollAnswerQuery) {
+        this.emitter.emit("poll_answer", pollAnswerQuery);
         if (this.onPollAnswerCallback !== undefined) {
           this.onPollAnswerCallback(pollAnswerQuery);
         }
+      } else if (chatJoinReq) {
+        this.emitter.emit("chat_join_request", chatJoinReq);
       }
     });
   }
@@ -302,6 +314,14 @@ export class TelegramAPI {
           this.timeout = setTimeout(() => this.startPolling(), 100);
         }
       });
+  }
+
+  on<E extends keyof TelegramEvents>(
+    event: E,
+    listener: (...callbacks: TelegramEvents[E]) => void
+  ) {
+    //@ts-expect-error
+    return this.emitter.on(event, listener);
   }
 
   /**
@@ -1139,6 +1159,35 @@ export class TelegramAPI {
       await this.sendRequest("post", this.endpoint + "getFile", {
         file_id: file_id,
       })
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to change the list of the bot's commands. for more details about bot commands. Returns True on success.
+   * @see https://core.telegram.org/bots#commands
+   * @param commands A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
+   * @returns boolean
+   */
+
+  async setMyCommands(commands: IBotCommand[]): Promise<boolean> {
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "setMyCommands", {
+        commands: JSON.stringify(commands),
+      })
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, higher level commands will be shown to affected users. Returns True on success.
+   * @returns boolean
+   */
+  async deleteMyCommands() {
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "deleteMyCommands", {})
     ).result;
 
     return send;

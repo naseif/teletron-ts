@@ -12,6 +12,7 @@ export {
   IMessageId,
   LocalFile,
   ActionType,
+  TelegramEvents,
 } from "./types";
 
 export {
