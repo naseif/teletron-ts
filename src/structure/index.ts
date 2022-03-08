@@ -1,4 +1,5 @@
 export { TelegramAPI } from "./TelegramAPI";
+export { TelegramAPITest } from "./TelegramAPITest";
 export {
   TMessageCallback,
   TInlineQueryCallback,

@@ -54,3 +54,8 @@ export interface IMessageId {
    */
   message_id: number;
 }
+
+export interface TelegramEvents {
+  message: [message: IMessage];
+  editedMessage: [message: IMessage];
+}
