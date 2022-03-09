@@ -36,4 +36,5 @@ export {
   sendDiceOptions,
   getUserProfilePhotosOptions,
   setMyCommandsOptions,
+  banChatMemberOptions,
 } from "./methodsOptions";

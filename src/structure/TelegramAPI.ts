@@ -24,6 +24,7 @@ import {
   stopMessageLiveLocationOptions,
   sendVideoNoteOptions,
   setMyCommandsOptions,
+  banChatMemberOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1259,5 +1260,52 @@ export class TelegramAPI {
     return send;
   }
 
-  async banChatMember(chat_id: string | number) {}
+  /**
+   * Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @param options banChatMemberOptions
+   * @returns
+   */
+  async banChatMember(
+    chat_id: string | number,
+    user_id: number,
+    options?: banChatMemberOptions
+  ) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+      ...options,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "banChatMember", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to unban a previously banned user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don't want this, use the parameter only_if_banned. Returns True on success.
+   * @param chat_id Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @param only_if_banned Do nothing if the user is not banned
+   */
+  async unbanChatMember(
+    chat_id: string | number,
+    user_id: number,
+    only_if_banned?: boolean
+  ) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+      only_if_banned: only_if_banned,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "unbanChatMember", params)
+    ).result;
+
+    return send;
+  }
 }
