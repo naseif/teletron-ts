@@ -70,4 +70,5 @@ export interface TelegramEvents {
   poll: [poll: IPoll];
   poll_answer: [pollAnswer: IPollAnswer];
   chat_join_request: [request: IChatJoinRequest];
+  error: [error: any];
 }

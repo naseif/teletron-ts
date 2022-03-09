@@ -147,14 +147,18 @@ export class TelegramAPI {
     data: {},
     options?: NeedleOptions
   ) {
-    const req = await needle(apiMethod, url, data, options);
-    const res = await req.body;
-
-    if (!res?.ok) {
-      throw new Error(`API CALL FAILED: ${res.description}`);
+    try {
+      const req = await needle(apiMethod, url, data, options);
+      const res = await req.body;
+      return res;
+    } catch (error) {
+      //@ts-expect-error
+      this.emitter.on("error", error);
     }
 
-    return res;
+    // if (!res?.ok) {
+    //   throw new Error(`API CALL FAILED: ${res.description}`);
+    // }
   }
 
   /**
