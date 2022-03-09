@@ -154,6 +154,36 @@ export class TelegramAPI {
     return res;
   }
 
+  /**
+   * Event listener for the telegram events
+   * @param event TelegramEvents
+   * @param listener TelegramEvents
+   * @returns void
+   */
+
+  on<E extends keyof TelegramEvents>(
+    event: E,
+    listener: (...callbacks: TelegramEvents[E]) => void
+  ) {
+    //@ts-expect-error
+    this.emitter.on(event, listener);
+  }
+
+  /**
+   * Event listener for the telegram events
+   * @param event TelegramEvents
+   * @param listener TelegramEvents
+   * @returns void
+   */
+
+  once<E extends keyof TelegramEvents>(
+    event: E,
+    listener: (...callbacks: TelegramEvents[E]) => void
+  ) {
+    //@ts-expect-error
+    this.emitter.once(event, listener);
+  }
+
   onMessage(callback: TMessageCallback) {
     this.onMessageCallback = callback;
   }
@@ -315,14 +345,6 @@ export class TelegramAPI {
           this.timeout = setTimeout(() => this.startPolling(), 100);
         }
       });
-  }
-
-  on<E extends keyof TelegramEvents>(
-    event: E,
-    listener: (...callbacks: TelegramEvents[E]) => void
-  ) {
-    //@ts-expect-error
-    return this.emitter.on(event, listener);
   }
 
   /**
