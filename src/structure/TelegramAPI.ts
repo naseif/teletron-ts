@@ -635,7 +635,7 @@ export class TelegramAPI {
    */
 
   async sendVideo(
-    chat_id: string,
+    chat_id: string | number,
     video: string | LocalFile,
     options?: sendVideoOptions
   ): Promise<IMessage> {
@@ -1258,4 +1258,6 @@ export class TelegramAPI {
 
     return send;
   }
+
+  async banChatMember(chat_id: string | number) {}
 }
