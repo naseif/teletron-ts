@@ -45,8 +45,15 @@ const telegram = new TelegramAPI("token"); // bot token api
 // listen for the message event
 
 telegram.onMessage(async (message) => {
-  if (message.text === "Hi")
-    await telegram.sendMessage(message.chat.id, "Hi there!"); // sendMessage will return an instance of IMessage
+  if (message.text === "Hi bot!")
+    await telegram.sendMessage(message.chat.id, "Hi there, human!"); // sendMessage will return an instance of IMessage
+});
+
+// OR
+
+telegram.on("message", async (message) => {
+  if (message.text === "Hi bot!")
+    await telegram.sendMessage(message.chat.id, "Hi there, human!"); // sendMessage will return an instance of IMessage
 });
 
 // fetch new updates from the api

@@ -1169,6 +1169,7 @@ export class TelegramAPI {
    * Use this method to change the list of the bot's commands. for more details about bot commands. Returns True on success.
    * @see https://core.telegram.org/bots#commands
    * @param commands A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
+   * @param options setMyCommandsOptions
    * @returns boolean
    */
 
@@ -1199,8 +1200,10 @@ export class TelegramAPI {
 
   /**
    * Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, higher level commands will be shown to affected users. Returns True on success.
+   * @param options setMyCommandsOptions
    * @returns boolean
    */
+
   async deleteMyCommands(options?: setMyCommandsOptions) {
     let params = {};
 
