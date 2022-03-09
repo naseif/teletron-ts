@@ -1356,7 +1356,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     options?: promoteChatMemberOptions
-  ) {
+  ): Promise<boolean> {
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1367,6 +1367,90 @@ export class TelegramAPI {
       await this.sendRequest(
         "post",
         this.endpoint + "promoteChatMember",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to set a custom title for an administrator in a supergroup promoted by the bot. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+   * @param user_id Unique identifier of the target user
+   * @param custom_title New custom title for the administrator; 0-16 characters, emoji are not allowed
+   * @returns boolean
+   */
+
+  async setChatAdministratorCustomTitle(
+    chat_id: string | number,
+    user_id: number,
+    custom_title: string
+  ): Promise<boolean> {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+      custom_title: custom_title,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatAdministratorCustomTitle",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to ban a channel chat in a supergroup or a channel. Until the chat is unbanned, the owner of the banned chat won't be able to send messages on behalf of any of their channels. The bot must be an administrator in the supergroup or channel for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param sender_chat_id Unique identifier of the target sender chat
+   * @returns boolean
+   */
+
+  async banChatSenderChat(
+    chat_id: string | number,
+    sender_chat_id: number
+  ): Promise<boolean> {
+    let params = {
+      chat_id: chat_id,
+      sender_chat_id: sender_chat_id,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "banChatSenderChat",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to unban a previously banned channel chat in a supergroup or channel. The bot must be an administrator for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param sender_chat_id Unique identifier of the target sender chat
+   * @returns boolean
+   */
+
+  async unbanChatSenderChat(
+    chat_id: string | number,
+    sender_chat_id: number
+  ): Promise<boolean> {
+    let params = {
+      chat_id: chat_id,
+      sender_chat_id: sender_chat_id,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "unbanChatSenderChat",
         params
       )
     ).result;
