@@ -36,7 +36,8 @@ export interface OptionsBase {
     | IInlineKeyboardMarkup
     | IReplyKeyboardMarkup
     | IReplayKeyboardRemove
-    | IForceReply;
+    | IForceReply
+    | string;
 }
 
 export interface sendPollOptions extends OptionsBase {
