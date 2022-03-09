@@ -61,3 +61,9 @@ export { IInputMediaVideo } from "./IInputMediaVideo";
 export { IUserProfilePhotos } from "./IUserProfilePhotos";
 export { IFile } from "./IFile";
 export { IBotCommand } from "./IBotCommand";
+export {
+  IBotCommandScopeBase,
+  IBotCommandScopeChat,
+  IBotCommandScopeChatAdministrators,
+  IBotCommandScopeChatMember,
+} from "./IBotCommandScope";

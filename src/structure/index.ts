@@ -35,4 +35,5 @@ export {
   sendContactOptions,
   sendDiceOptions,
   getUserProfilePhotosOptions,
+  setMyCommandsOptions,
 } from "./methodsOptions";

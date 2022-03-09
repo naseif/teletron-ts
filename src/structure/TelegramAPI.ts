@@ -23,6 +23,7 @@ import {
   sendVoiceOptions,
   stopMessageLiveLocationOptions,
   sendVideoNoteOptions,
+  setMyCommandsOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1171,11 +1172,26 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async setMyCommands(commands: IBotCommand[]): Promise<boolean> {
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "setMyCommands", {
+  async setMyCommands(
+    commands: IBotCommand[],
+    options?: setMyCommandsOptions
+  ): Promise<boolean> {
+    let params = {};
+
+    if (options && options.scope) {
+      params = {
         commands: JSON.stringify(commands),
-      })
+        scope: JSON.stringify(options.scope),
+        language_code: options.language_code ? options.language_code : "en",
+      };
+    } else {
+      params = {
+        commands: JSON.stringify(commands),
+      };
+    }
+
+    const send: boolean = await (
+      await this.sendRequest("post", this.endpoint + "setMyCommands", params)
     ).result;
 
     return send;
@@ -1185,9 +1201,34 @@ export class TelegramAPI {
    * Use this method to delete the list of the bot's commands for the given scope and user language. After deletion, higher level commands will be shown to affected users. Returns True on success.
    * @returns boolean
    */
-  async deleteMyCommands() {
+  async deleteMyCommands(options?: setMyCommandsOptions) {
+    let params = {};
+
+    switch (options) {
+      case options?.scope:
+        params = {
+          scope: JSON.stringify(options?.scope),
+        };
+        break;
+
+      case options?.language_code:
+        params = {
+          language_code: options?.language_code,
+        };
+        break;
+
+      case options?.language_code && options.scope:
+        params = {
+          scope: JSON.stringify(options?.scope),
+          language_code: options?.language_code,
+        };
+        break;
+      default:
+        params = {};
+    }
+
     const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "deleteMyCommands", {})
+      await this.sendRequest("post", this.endpoint + "deleteMyCommands", params)
     ).result;
 
     return send;
