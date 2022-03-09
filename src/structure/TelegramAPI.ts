@@ -25,6 +25,8 @@ import {
   sendVideoNoteOptions,
   setMyCommandsOptions,
   banChatMemberOptions,
+  restrictChatMemberOptions,
+  promoteChatMemberOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1189,7 +1191,7 @@ export class TelegramAPI {
   }
 
   /**
-   * Use this method to change the list of the bot's commands. for more details about bot commands. Returns True on success.
+   * Use this method to change the list of the bot's commands. Returns True on success.
    * @see https://core.telegram.org/bots#commands
    * @param commands A JSON-serialized list of bot commands to be set as the list of the bot's commands. At most 100 commands can be specified.
    * @param options setMyCommandsOptions
@@ -1265,13 +1267,14 @@ export class TelegramAPI {
    * @param chat_id Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
    * @param user_id Unique identifier of the target user
    * @param options banChatMemberOptions
-   * @returns
+   * @returns boolean
    */
+
   async banChatMember(
     chat_id: string | number,
     user_id: number,
     options?: banChatMemberOptions
-  ) {
+  ): Promise<boolean> {
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1290,12 +1293,14 @@ export class TelegramAPI {
    * @param chat_id Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
    * @param user_id Unique identifier of the target user
    * @param only_if_banned Do nothing if the user is not banned
+   * @returns boolean
    */
+
   async unbanChatMember(
     chat_id: string | number,
     user_id: number,
     only_if_banned?: boolean
-  ) {
+  ): Promise<boolean> {
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1304,6 +1309,66 @@ export class TelegramAPI {
 
     const send: boolean = await (
       await this.sendRequest("post", this.endpoint + "unbanChatMember", params)
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to restrict a user in a supergroup. The bot must be an administrator in the supergroup for this to work and must have the appropriate administrator rights. Pass True for all permissions to lift restrictions from a user. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+   * @param user_id Unique identifier of the target user
+   * @param options restrictChatMemberOptions
+   * @returns boolean
+   */
+
+  async restrictChatMember(
+    chat_id: string | number,
+    user_id: number,
+    options?: restrictChatMemberOptions
+  ): Promise<boolean> {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+      ...options,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "restrictChatMember",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to promote or demote a user in a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Pass False for all boolean parameters to demote a user. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @param options promoteChatMemberOptions
+   * @returns boolean
+   */
+
+  async promoteChatMember(
+    chat_id: string | number,
+    user_id: number,
+    options?: promoteChatMemberOptions
+  ) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+      ...options,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "promoteChatMember",
+        params
+      )
     ).result;
 
     return send;

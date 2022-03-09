@@ -3,6 +3,7 @@ import {
   IBotCommandScopeChat,
   IBotCommandScopeChatAdministrators,
   IBotCommandScopeChatMember,
+  IChatPermissions,
 } from "../types";
 import {
   IInlineKeyboardMarkup,
@@ -452,4 +453,62 @@ export interface banChatMemberOptions {
    * Pass True to delete all messages from the chat for the user that is being removed. If False, the user will be able to see messages in the group that were sent before the user was removed. Always True for supergroups and channels.
    */
   revoke_messages?: boolean;
+}
+
+export interface restrictChatMemberOptions {
+  /**
+   * A JSON-serialized object for new user permissions
+   */
+  permissions?: IChatPermissions | string;
+  /**
+   * Date when restrictions will be lifted for the user, unix time. If user is restricted for more than 366 days or less than 30 seconds from the current time, they are considered to be restricted forever
+   */
+  until_date?: number;
+}
+
+export interface promoteChatMemberOptions {
+  /**
+   * Pass True, if the administrator's presence in the chat is hidden
+   */
+  is_anonymous?: boolean;
+  /**
+   * Pass True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege
+   */
+  can_manage_chat?: boolean;
+  /**
+   * Pass True, if the administrator can create channel posts, channels only
+   */
+  can_post_messages?: boolean;
+  /**
+   * Pass True, if the administrator can edit messages of other users and can pin messages, channels only
+   */
+  can_edit_messages?: boolean;
+  /**
+   * Pass True, if the administrator can delete messages of other users
+   */
+  can_delete_messages?: boolean;
+  /**
+   * Pass True, if the administrator can manage voice chats
+   */
+  can_manage_voice_chats?: boolean;
+  /**
+   * Pass True, if the administrator can restrict, ban or unban chat members
+   */
+  can_restrict_members?: boolean;
+  /**
+   * Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
+   */
+  can_promote_members?: boolean;
+  /**
+   * Pass True, if the administrator can change chat title, photo and other settings
+   */
+  can_change_info?: boolean;
+  /**
+   * Pass True, if the administrator can invite new users to the chat
+   */
+  can_invite_users?: boolean;
+  /**
+   * Pass True, if the administrator can pin messages, supergroups only
+   */
+  can_pin_messages?: boolean;
 }
