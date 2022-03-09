@@ -578,7 +578,7 @@ export class TelegramAPI {
     } else {
       params = {
         chat_id: chat_id,
-        photo: audio,
+        audio: audio,
         ...options,
       };
     }
