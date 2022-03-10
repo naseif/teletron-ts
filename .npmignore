@@ -5,3 +5,4 @@ tsconfig.json
 package-lock.json
 docs
 test.js
+.grenrc.js
