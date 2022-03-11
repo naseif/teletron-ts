@@ -1,6 +1,6 @@
 {
   "name": "teletron-ts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.",
   "main": "dist/main.js",
   "scripts": {
@@ -12,7 +12,16 @@
     "url": "git+https://github.com/naseif/teletron-ts.git"
   },
   "keywords": [
-    "telegram"
+    "telegram",
+    "telegram-bots",
+    "telegram-api",
+    "telegram-bot-api",
+    "telegram-node-api",
+    "telegram-node",
+    "telegram-nodejs",
+    "node-telegram-bot-api",
+    "telegram-bot-api-nodejs",
+    "telegram-bot-api-node"
   ],
   "author": "naseif",
   "license": "MIT",
