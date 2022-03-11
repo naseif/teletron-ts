@@ -152,8 +152,7 @@ export class TelegramAPI {
       const res = await req.body;
       return res;
     } catch (error) {
-      //@ts-expect-error
-      this.emitter.on("error", error);
+      this.emitter.emit("error", error);
     }
 
     // if (!res?.ok) {
