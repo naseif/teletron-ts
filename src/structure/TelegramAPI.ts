@@ -1560,4 +1560,53 @@ export class TelegramAPI {
     return send;
   }
 
+  /**
+   * Use this method to revoke an invite link created by the bot. If the primary link is revoked, a new link is automatically generated. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the revoked invite link as ChatInviteLink object.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param invite_link The invite link to edit
+   * @returns IChatInviteLink
+   */
+
+  async revokeChatInviteLink(chat_id: number | string, invite_link: string) {
+    let params = {
+      chat_id: chat_id,
+      invite_link: invite_link,
+    };
+
+    const send: IChatInviteLink = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "revokeChatInviteLink",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to approve a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @returns boolean
+   */
+
+  async approveChatJoinRequest(chat_id: string | number, user_id: number) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "approveChatJoinRequest",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
 }
