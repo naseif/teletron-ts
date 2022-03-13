@@ -2,7 +2,7 @@ import EventEmitter from "eventemitter3";
 import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
 import mime from "mime-types";
 import { URLSearchParams } from "node:url";
-import { IChatInviteLink, IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
+import { IChat, IChatInviteLink, IChatMember, IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -1779,5 +1779,138 @@ export class TelegramAPI {
     return send;
   }
 
+  /**
+   * Use this method to clear the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @returns boolean
+   */
+
+  async unpinAllChatMessages(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "unpinAllChatMessages",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method for your bot to leave a group, supergroup or channel. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @returns boolean
+   */
+
+  async leaveChat(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "leaveChat",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a Chat object on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @returns IChat
+   */
+
+  async getChat(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: IChat = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getChat",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get a list of administrators in a chat. On success, returns an Array of ChatMember objects that contains information about all chat administrators except other bots. If the chat is a group or a supergroup and no administrators were appointed, only the creator will be returned.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @returns IChatMember[]
+   */
+
+  async getChatAdministrators(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: IChatMember[] = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getChatAdministrators",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get the number of members in a chat. Returns Int on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @returns number
+   */
+
+  async getChatMemberCount(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: number = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getChatMemberCount",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to get information about a member of a chat. Returns a ChatMember object on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @returns IChatMember
+   */
+
+  async getChatMember(chat_id: string | number, user_id: number) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+    }
+
+    const send: IChatMember = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getChatMember",
+        params
+      )
+    ).result;
+
+    return send;
+  }
 
 }

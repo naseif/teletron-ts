@@ -67,3 +67,10 @@ export {
   IBotCommandScopeChatAdministrators,
   IBotCommandScopeChatMember,
 } from "./IBotCommandScope";
+export { IChatMemberAdministrator } from "./IChatMemberAdministrator";
+export { IChatMemberBanned } from "./IChatMemberBanned";
+export { IChatMemberLeft } from "./IChatMemberLeft";
+export { IChatMemberMember } from "./IChatMemberMember";
+export { IChatMemberOwner } from "./IChatMemberOwner";
+export { IChatMemberRestricted } from "./IChatMemberRestricted";
+export { IChatMember } from "./IChatMember";
