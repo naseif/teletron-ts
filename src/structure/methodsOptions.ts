@@ -531,3 +531,5 @@ export interface createChatInviteLinkOptions {
    */
   creates_join_request?: boolean;
 }
+
+export interface editChatInviteLinkOptions extends createChatInviteLinkOptions { }

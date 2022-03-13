@@ -28,6 +28,7 @@ import {
   restrictChatMemberOptions,
   promoteChatMemberOptions,
   createChatInviteLinkOptions,
+  editChatInviteLinkOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1526,6 +1527,32 @@ export class TelegramAPI {
       await this.sendRequest(
         "post",
         this.endpoint + "createChatInviteLink",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to edit a non-primary invite link created by the bot. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the edited invite link as a ChatInviteLink object.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param invite_link The invite link to edit
+   * @param options editChatInviteLinkOptions
+   * @returns IChatInviteLink
+   */
+
+  async editChatInviteLink(chat_id: number | string, invite_link: string, options?: editChatInviteLinkOptions) {
+    let params = {
+      chat_id: chat_id,
+      invite_link: invite_link,
+      ...options
+    };
+
+    const send: IChatInviteLink = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "editChatInviteLink",
         params
       )
     ).result;
