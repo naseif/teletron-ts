@@ -30,6 +30,8 @@ import {
   createChatInviteLinkOptions,
   editChatInviteLinkOptions,
   answerCallbackQueryOptions,
+  editMessageTextOptions,
+  editMessageCaptionOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -2011,6 +2013,52 @@ export class TelegramAPI {
     return send;
   }
 
+  /**
+   * Use this method to edit text and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+   * @param text New text of the message, 1-4096 characters after entities parsing
+   * @param options editMessageTextOptions
+   * @returns boolean | IMessage
+   */
 
+  async editMessageText(text: string, options?: editMessageTextOptions): Promise<boolean | IMessage> {
+    let params = {
+      text: text,
+      ...options
+    }
+
+    const send: IMessage | boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "editMessageText",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to edit captions of messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
+   * @param caption New caption of the message, 0-1024 characters after entities parsing
+   * @param options editMessageCaptionOptions
+   * @returns IMessage | boolean
+   */
+
+  async editMessageCaption(caption: string, options?: editMessageCaptionOptions) {
+    let params = {
+      caption: caption,
+      ...options
+    }
+
+    const send: IMessage | boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "editMessageCaption",
+        params
+      )
+    ).result;
+
+    return send;
+  }
 
 }

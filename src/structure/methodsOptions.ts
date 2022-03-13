@@ -551,3 +551,61 @@ export interface answerCallbackQueryOptions {
    */
   cache_time?: number
 }
+
+export interface editMessageTextOptions {
+  /**
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   */
+  chat_id?: string | number;
+  /**
+   * Required if inline_message_id is not specified. Identifier of the message to edit
+   */
+  message_id?: number;
+  /**
+   * Required if chat_id and message_id are not specified. Identifier of the inline message
+   */
+  inline_message_id?: string;
+  /**
+   * Mode for parsing entities in the message text.
+   */
+  parse_mode?: "MarkdownV2" | "HTML" | "Markdown";
+  /**
+   * A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
+   */
+  entities?: IMessageEntity[] | string;
+  /**
+   * Disables link previews for links in this message
+   */
+  disable_web_page_preview?: boolean;
+  /**
+   * A JSON-serialized object for an inline keyboard.
+   */
+  reply_markup?: IInlineKeyboardMarkup | string
+}
+
+export interface editMessageCaptionOptions {
+  /**
+   * Required if inline_message_id is not specified. Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   */
+  chat_id?: string | number;
+  /**
+   * Required if inline_message_id is not specified. Identifier of the message to edit
+   */
+  message_id?: number;
+  /**
+   * Required if chat_id and message_id are not specified. Identifier of the inline message
+   */
+  inline_message_id?: string;
+  /**
+   * Mode for parsing entities in the message text.
+   */
+  parse_mode?: "MarkdownV2" | "HTML" | "Markdown";
+  /**
+   * A JSON-serialized list of special entities that appear in message text, which can be specified instead of parse_mode
+   */
+  caption_entities?: IMessageEntity[] | string;
+  /**
+   * A JSON-serialized object for an inline keyboard.
+   */
+  reply_markup?: IInlineKeyboardMarkup | string
+}
