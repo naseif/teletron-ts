@@ -2,7 +2,7 @@ import EventEmitter from "eventemitter3";
 import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
 import mime from "mime-types";
 import { URLSearchParams } from "node:url";
-import { IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
+import { IChatInviteLink, IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -27,6 +27,7 @@ import {
   banChatMemberOptions,
   restrictChatMemberOptions,
   promoteChatMemberOptions,
+  createChatInviteLinkOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1484,4 +1485,52 @@ export class TelegramAPI {
 
     return send;
   }
+
+  /**
+   * Use this method to generate a new primary invite link for a chat; any previously generated primary link is revoked. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns the new invite link as String on success.
+   * @param chat_id 
+   * @returns boolean
+   */
+
+  async exportChatInviteLink(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "exportChatInviteLink",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
+  /**
+   * Use this method to create an additional invite link for a chat. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. The link can be revoked using the method revokeChatInviteLink. Returns the new invite link as ChatInviteLink object.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param options createChatInviteLinkOptions
+   * @returns IChatInviteLink
+   */
+
+  async createChatInviteLink(chat_id: string | number, options?: createChatInviteLinkOptions) {
+    let params = {
+      chat_id: chat_id,
+      ...options
+    };
+
+    const send: IChatInviteLink = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "createChatInviteLink",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
 }

@@ -39,4 +39,5 @@ export {
   banChatMemberOptions,
   restrictChatMemberOptions,
   promoteChatMemberOptions,
+  createChatInviteLinkOptions
 } from "./methodsOptions";
