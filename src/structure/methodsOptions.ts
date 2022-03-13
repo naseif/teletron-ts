@@ -34,11 +34,11 @@ export interface OptionsBase {
    * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-    | IInlineKeyboardMarkup
-    | IReplyKeyboardMarkup
-    | IReplayKeyboardRemove
-    | IForceReply
-    | string;
+  | IInlineKeyboardMarkup
+  | IReplyKeyboardMarkup
+  | IReplayKeyboardRemove
+  | IForceReply
+  | string;
 }
 
 export interface sendPollOptions extends OptionsBase {
@@ -432,10 +432,10 @@ export interface setMyCommandsOptions {
    * A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault.
    */
   scope?:
-    | IBotCommandScopeBase
-    | IBotCommandScopeChat
-    | IBotCommandScopeChatAdministrators
-    | IBotCommandScopeChatMember;
+  | IBotCommandScopeBase
+  | IBotCommandScopeChat
+  | IBotCommandScopeChatAdministrators
+  | IBotCommandScopeChatMember;
 
   /**
      * A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
@@ -512,3 +512,4 @@ export interface promoteChatMemberOptions {
    */
   can_pin_messages?: boolean;
 }
+

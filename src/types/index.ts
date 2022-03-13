@@ -5,7 +5,7 @@ export { IChat } from "./IChat";
 export { IChatInviteLink } from "./IChatInviteLink";
 export { IChatJoinRequest } from "./IChatJoinRequest";
 export { IChatLocation } from "./IChatLocation";
-export { IChatPermissions } from "./IChatPermission";
+export { IChatPermissions } from "./IChatPermissions";
 export { IChatPhoto } from "./IChatPhoto";
 export { IChosenInlineResult } from "./IChosenInlineResult";
 export { IContact } from "./IContact";

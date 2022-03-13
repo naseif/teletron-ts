@@ -2,7 +2,7 @@ import EventEmitter from "eventemitter3";
 import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
 import mime from "mime-types";
 import { URLSearchParams } from "node:url";
-import { IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
+import { IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -1454,6 +1454,30 @@ export class TelegramAPI {
       await this.sendRequest(
         "post",
         this.endpoint + "unbanChatSenderChat",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to set default chat permissions for all members. The bot must be an administrator in the group or a supergroup for this to work and must have the can_restrict_members administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
+   * @param permissions Object for new default chat permissions
+   * @returns boolean
+   */
+
+  async setChatPermissions(chat_id: number | string, permissions: IChatPermissions) {
+    let params = {
+      chat_id: chat_id,
+      permissions: JSON.stringify(permissions),
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatPermissions",
         params
       )
     ).result;
