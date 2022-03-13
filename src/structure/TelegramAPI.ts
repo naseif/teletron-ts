@@ -1679,4 +1679,105 @@ export class TelegramAPI {
     return send;
   }
 
+  /**
+   * Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param title New chat title, 1-255 characters
+   * @returns boolean
+   */
+
+  async setChatTitle(chat_id: string | number, title: string) {
+    let params = {
+      chat_id: chat_id,
+      title: title
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatTitle",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
+  /**
+   * Use this method to change the description of a group, a supergroup or a channel. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param description Optional. New chat description, 0-255 characters
+   * @returns boolean
+   */
+
+  async setChatDescription(chat_id: string | number, description?: string) {
+    let params = {
+      chat_id: chat_id,
+      description: description
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatDescription",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to add a message to the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param message_id Identifier of a message to pin
+   * @param disable_notification Pass True, if it is not necessary to send a notification to all chat members about the new pinned message. Notifications are always disabled in channels and private chats.
+   * @returns boolean
+   */
+
+  async pinChatMessage(chat_id: string | number, message_id: number, disable_notification?: boolean) {
+    let params = {
+      chat_id: chat_id,
+      message_id: message_id,
+      disable_notification: disable_notification
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "pinChatMessage",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
+  /**
+   * Use this method to remove a message from the list of pinned messages in a chat. If the chat is not a private chat, the bot must be an administrator in the chat for this to work and must have the 'can_pin_messages' administrator right in a supergroup or 'can_edit_messages' administrator right in a channel. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param message_id Optional. Identifier of a message to unpin. If not specified, the most recent pinned message (by sending date) will be unpinned.
+   * @returns boolean
+   */
+
+  async unpinChatMessage(chat_id: string | number, message_id?: number) {
+    let params = {
+      chat_id: chat_id,
+      message_id: message_id,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "unpinChatMessage",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
 }
