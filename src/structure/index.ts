@@ -40,5 +40,6 @@ export {
   restrictChatMemberOptions,
   promoteChatMemberOptions,
   createChatInviteLinkOptions,
-  editChatInviteLinkOptions
+  editChatInviteLinkOptions,
+  answerCallbackQueryOptions
 } from "./methodsOptions";

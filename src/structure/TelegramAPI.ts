@@ -2,7 +2,7 @@ import EventEmitter from "eventemitter3";
 import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
 import mime from "mime-types";
 import { URLSearchParams } from "node:url";
-import { IChat, IChatInviteLink, IChatMember, IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
+import { IBotCommandScopeBase, IBotCommandScopeChat, IBotCommandScopeChatAdministrators, IBotCommandScopeChatMember, IChat, IChatInviteLink, IChatMember, IChatPermissions, IMessage, IUpdate, IUpdateOptions, IUser } from "../types";
 import {
   sendMessageOptions,
   sendPollOptions,
@@ -29,6 +29,7 @@ import {
   promoteChatMemberOptions,
   createChatInviteLinkOptions,
   editChatInviteLinkOptions,
+  answerCallbackQueryOptions,
 } from "./index";
 import {
   TCallbackQueryCallback,
@@ -1268,6 +1269,34 @@ export class TelegramAPI {
   }
 
   /**
+   * Use this method to get the current list of the bot's commands for the given scope and user language. Returns Array of BotCommand on success. If commands aren't set, an empty list is returned.
+   * @param scope Object describing scope of users. Defaults to BotCommandScopeDefault.
+   * @param language_code Optional. A two-letter ISO 639-1 language code or an empty string.
+   * @returns IBotCommand[]
+   */
+
+  async getMyCommands(scope: IBotCommandScopeBase
+    | IBotCommandScopeChat
+    | IBotCommandScopeChatAdministrators
+    | IBotCommandScopeChatMember, language_code?: string
+  ) {
+    let params = {
+      scope: JSON.stringify(scope),
+      language_code: language_code,
+    };
+
+    const send: IBotCommand[] = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "getMyCommands",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
    * Use this method to ban a user in a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
    * @param chat_id Unique identifier for the target group or username of the target supergroup or channel (in the format @channelusername)
    * @param user_id Unique identifier of the target user
@@ -1912,5 +1941,76 @@ export class TelegramAPI {
 
     return send;
   }
+
+  /**
+   * Use this method to set a new group sticker set for a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @param sticker_set_name Name of the sticker set to be set as the group sticker set
+   * @returns boolean
+   */
+
+  async setChatStickerSet(chat_id: string | number, sticker_set_name: string) {
+    let params = {
+      chat_id: chat_id,
+      sticker_set_name: sticker_set_name,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatStickerSet",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to delete a group sticker set from a supergroup. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Use the field can_set_sticker_set optionally returned in getChat requests to check if the bot can use this method. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
+   * @returns boolean
+   */
+
+  async deleteChatStickerSet(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "deleteChatStickerSet",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
+   * @param callback_query_id Unique identifier for the query to be answered
+   * @param options answerCallbackQueryOptions
+   */
+
+  async answerCallbackQuery(callback_query_id: string, options?: answerCallbackQueryOptions) {
+    let params = {
+      callback_query_id: callback_query_id,
+      ...options
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "answerCallbackQuery",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
 
 }
