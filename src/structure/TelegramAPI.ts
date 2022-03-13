@@ -1608,5 +1608,75 @@ export class TelegramAPI {
     return send;
   }
 
+  /**
+   * Use this method to decline a chat join request. The bot must be an administrator in the chat for this to work and must have the can_invite_users administrator right. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param user_id Unique identifier of the target user
+   * @returns boolean
+   */
+
+  async declineChatJoinRequest(chat_id: string | number, user_id: number) {
+    let params = {
+      chat_id: chat_id,
+      user_id: user_id,
+    };
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "declineChatJoinRequest",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+
+  /**
+   * Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @param photo New chat photo. Must be local
+   * @returns boolean
+   */
+
+  async setChatPhoto(chat_id: string | number, photo: LocalFile) {
+    let params = {
+      chat_id: chat_id,
+      photo: photo
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "setChatPhoto",
+        params
+      )
+    ).result;
+
+    return send;
+  }
+
+  /**
+   * Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate administrator rights. Returns True on success.
+   * @param chat_id Unique identifier for the target chat or username of the target channel (in the format @channelusername)
+   * @returns boolean
+   */
+
+  async deleteChatPhoto(chat_id: string | number) {
+    let params = {
+      chat_id: chat_id,
+    }
+
+    const send: boolean = await (
+      await this.sendRequest(
+        "post",
+        this.endpoint + "deleteChatPhoto",
+        params
+      )
+    ).result;
+
+    return send;
+  }
 
 }
