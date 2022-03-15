@@ -8,6 +8,11 @@ import {
   IChosenInlineResult,
   ICallbackQuery,
   IChatJoinRequest,
+  IAudio,
+  IDocument,
+  IPhotoSize,
+  IUser,
+  IVideo,
 } from "../types";
 
 export type TMessageCallback = (message: IMessage) => void;
