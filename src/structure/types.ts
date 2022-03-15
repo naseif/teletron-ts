@@ -65,12 +65,6 @@ export interface IMessageId {
 
 export interface TelegramEvents {
   message: [message: IMessage];
-  audio: [audio: IAudio];
-  video: [video: IVideo]
-  photo: [photo: IPhotoSize[]]
-  document: [document: IDocument]
-  new_chat_members: [member: IUser[]]
-  left_chat_member: [member: IUser]
   edited_message: [message: IMessage];
   edited_channel_post: [message: IMessage];
   channel_post: [message: IMessage];

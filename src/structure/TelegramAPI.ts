@@ -336,29 +336,9 @@ export class TelegramAPI {
       let chatJoinReq = update.chat_join_request;
 
       if (message) {
-        if (message.audio) {
-          this.emitter.emit("audio", message.audio);
-          return;
-        } else if (message.video) {
-          this.emitter.emit("video", message.video);
-          return;
-        } else if (message.photo) {
-          this.emitter.emit("photo", message.photo);
-          return;
-        } else if (message.document) {
-          this.emitter.emit("document", message.document);
-          return;
-        } else if (message.new_chat_members) {
-          this.emitter.emit("new_chat_members", message.new_chat_members);
-          return;
-        } else if (message.left_chat_member) {
-          this.emitter.emit("left_chat_member", message.left_chat_member);
-          return;
-        } else {
-          this.emitter.emit("message", message);
-          if (this.onMessageCallback !== undefined) {
-            this.onMessageCallback(message);
-          }
+        this.emitter.emit("message", message);
+        if (this.onMessageCallback !== undefined) {
+          this.onMessageCallback(message);
         }
       } else if (editedMessage) {
         this.emitter.emit("edited_message", editedMessage);
