@@ -2,6 +2,7 @@ export enum Errors {
   CLASS_INITIALIZATION_ERROR = "InitializationError",
   INVALID_TYPE = "Invalid Type",
   MISSING_PARAMS = "Missing Parameters",
+  INVALID_EVENT = "Invalid Event",
 }
 
 export class ErrosController extends Error {

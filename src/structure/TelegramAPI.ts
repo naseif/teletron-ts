@@ -175,7 +175,6 @@ export class TelegramAPI {
 
     if (!res.ok) {
       this.emitter.emit("error", res);
-      return;
     }
 
     return res;
@@ -192,6 +191,11 @@ export class TelegramAPI {
     event: E,
     listener: (...callbacks: TelegramEvents[E]) => void
   ) {
+    if (!event)
+      throw new ErrosController(
+        "You should provide a valid event",
+        Errors.INVALID_EVENT
+      );
     //@ts-expect-error
     this.emitter.on(event, listener);
   }
@@ -207,51 +211,111 @@ export class TelegramAPI {
     event: E,
     listener: (...callbacks: TelegramEvents[E]) => void
   ) {
+    if (!event)
+      throw new ErrosController(
+        "You should provide a valid event",
+        Errors.INVALID_EVENT
+      );
     //@ts-expect-error
     this.emitter.once(event, listener);
   }
 
   onMessage(callback: TMessageCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onMessageCallback = callback;
   }
 
   onEditedMessage(callback: TMessageCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onEditedMessageCallback = callback;
   }
 
   onChannelPost(callback: TMessageCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onChannelPostCallback = callback;
   }
 
   onEditedChannelPost(callback: TMessageCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onEditedChannelPostCallback = callback;
   }
 
   onCallbackQuery(callback: TCallbackQueryCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onCallbackQueryCallback = callback;
   }
 
   onInlineQuery(callback: TInlineQueryCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onInlineQueryCallback = callback;
   }
 
   onChosenInlineResult(callback: TChosenInlineResultCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onChosenInlineResultCallback = callback;
   }
 
   onShippingQuery(callback: TShippingQueryCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onShippingQueryCallback = callback;
   }
 
   onPreCheckoutQuery(callback: TPreCheckoutQueryCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onPreCheckoutQueryCallback = callback;
   }
 
   onPoll(callback: TPollCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onPollCallback = callback;
   }
 
   onPollAnswer(callback: TPollAnswerCallback) {
+    if (typeof callback !== "function")
+      throw new ErrosController(
+        `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
+        Errors.INVALID_TYPE
+      );
     this.onPollAnswerCallback = callback;
   }
 
