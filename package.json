@@ -1,10 +1,10 @@
 {
   "name": "teletron-ts",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.",
   "main": "dist/main.js",
   "scripts": {
-    "build:lib": "npx tsup src/main.ts --dts-resolve",
+    "build:lib": "npx tsup src/main.ts --dts-resolve --minify",
     "build:docs": "npx typedoc src/main.ts"
   },
   "repository": {
