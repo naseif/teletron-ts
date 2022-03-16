@@ -2,17 +2,9 @@
 
 Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.
 
-## Features
-
-- Full Telegram Bot API 5.7 support
-- Object-oriented
-- Full types support
-- Asynchronous
-- Speedy and efficient
-- Beginner friendly
-
 <!-- TOC -->
 
+- [Features](#features)
 - [Installation](#installation)
 - [Loading and configuring the module](#importing)
 - [Getting started](#getting-started)
@@ -22,6 +14,15 @@ Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.
   - [Inline Keyboards](#inline-keyboards)
 
 <!-- /TOC -->
+
+## Features
+
+- Full Telegram Bot API 5.7 support
+- Object-oriented
+- Full types support
+- Asynchronous
+- Speedy and efficient
+- Beginner friendly
 
 ## Installation
 
