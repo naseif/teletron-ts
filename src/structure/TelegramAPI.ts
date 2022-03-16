@@ -55,7 +55,6 @@ import {
   TPollCallback,
   TPreCheckoutQueryCallback,
   TShippingQueryCallback,
-  TOnError,
   IMessageId,
   LocalFile,
   ActionType,

@@ -34,11 +34,11 @@ export interface OptionsBase {
    * Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
    */
   reply_markup?:
-  | IInlineKeyboardMarkup
-  | IReplyKeyboardMarkup
-  | IReplayKeyboardRemove
-  | IForceReply
-  | string;
+    | IInlineKeyboardMarkup
+    | IReplyKeyboardMarkup
+    | IReplayKeyboardRemove
+    | IForceReply
+    | string;
 }
 
 export interface sendPollOptions extends OptionsBase {
@@ -432,10 +432,10 @@ export interface setMyCommandsOptions {
    * A JSON-serialized object, describing scope of users for which the commands are relevant. Defaults to BotCommandScopeDefault.
    */
   scope?:
-  | IBotCommandScopeBase
-  | IBotCommandScopeChat
-  | IBotCommandScopeChatAdministrators
-  | IBotCommandScopeChatMember;
+    | IBotCommandScopeBase
+    | IBotCommandScopeChat
+    | IBotCommandScopeChatAdministrators
+    | IBotCommandScopeChatMember;
 
   /**
      * A two-letter ISO 639-1 language code. If empty, commands will be applied to all users from the given scope, for whose language there are no dedicated commands
@@ -532,7 +532,8 @@ export interface createChatInviteLinkOptions {
   creates_join_request?: boolean;
 }
 
-export interface editChatInviteLinkOptions extends createChatInviteLinkOptions { }
+export interface editChatInviteLinkOptions
+  extends createChatInviteLinkOptions {}
 export interface answerCallbackQueryOptions {
   /**
    * Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
@@ -549,7 +550,7 @@ export interface answerCallbackQueryOptions {
   /**
    * The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
    */
-  cache_time?: number
+  cache_time?: number;
 }
 
 export interface editMessageTextOptions {
@@ -580,7 +581,7 @@ export interface editMessageTextOptions {
   /**
    * A JSON-serialized object for an inline keyboard.
    */
-  reply_markup?: IInlineKeyboardMarkup | string
+  reply_markup?: IInlineKeyboardMarkup | string;
 }
 
 export interface editMessageCaptionOptions {
@@ -607,5 +608,5 @@ export interface editMessageCaptionOptions {
   /**
    * A JSON-serialized object for an inline keyboard.
    */
-  reply_markup?: IInlineKeyboardMarkup | string
+  reply_markup?: IInlineKeyboardMarkup | string;
 }
