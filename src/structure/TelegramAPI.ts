@@ -71,7 +71,7 @@ import {
   IInputMediaVideo,
   IUserProfilePhotos,
 } from "../types";
-import { Errors, ErrosController } from "../helpers/ErrorsController";
+import { Errors, ErrorsController } from "../helpers/ErrorsController";
 
 export class TelegramAPI {
   /**
@@ -147,7 +147,7 @@ export class TelegramAPI {
   constructor(token: string) {
     this._token = token;
     if (!token)
-      throw new ErrosController(
+      throw new ErrorsController(
         "You must provide an API token",
         Errors.CLASS_INITIALIZATION_ERROR
       );
@@ -192,7 +192,7 @@ export class TelegramAPI {
     listener: (...callbacks: TelegramEvents[E]) => void
   ) {
     if (!event)
-      throw new ErrosController(
+      throw new ErrorsController(
         "You should provide a valid event",
         Errors.INVALID_EVENT
       );
@@ -212,7 +212,7 @@ export class TelegramAPI {
     listener: (...callbacks: TelegramEvents[E]) => void
   ) {
     if (!event)
-      throw new ErrosController(
+      throw new ErrorsController(
         "You should provide a valid event",
         Errors.INVALID_EVENT
       );
@@ -222,7 +222,7 @@ export class TelegramAPI {
 
   onMessage(callback: TMessageCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -231,7 +231,7 @@ export class TelegramAPI {
 
   onEditedMessage(callback: TMessageCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -240,7 +240,7 @@ export class TelegramAPI {
 
   onChannelPost(callback: TMessageCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -249,7 +249,7 @@ export class TelegramAPI {
 
   onEditedChannelPost(callback: TMessageCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -258,7 +258,7 @@ export class TelegramAPI {
 
   onCallbackQuery(callback: TCallbackQueryCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -267,7 +267,7 @@ export class TelegramAPI {
 
   onInlineQuery(callback: TInlineQueryCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -276,7 +276,7 @@ export class TelegramAPI {
 
   onChosenInlineResult(callback: TChosenInlineResultCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -285,7 +285,7 @@ export class TelegramAPI {
 
   onShippingQuery(callback: TShippingQueryCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -294,7 +294,7 @@ export class TelegramAPI {
 
   onPreCheckoutQuery(callback: TPreCheckoutQueryCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -303,7 +303,7 @@ export class TelegramAPI {
 
   onPoll(callback: TPollCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -312,7 +312,7 @@ export class TelegramAPI {
 
   onPollAnswer(callback: TPollAnswerCallback) {
     if (typeof callback !== "function")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The paramater callback must be from type 'function', recieved: ${typeof callback}`,
         Errors.INVALID_TYPE
       );
@@ -477,13 +477,13 @@ export class TelegramAPI {
     options?: sendMessageOptions
   ): Promise<IMessage> {
     if (typeof chatId !== "string" && typeof chatId !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chatId}`,
         Errors.INVALID_TYPE
       );
 
     if (!chatId || !text)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chatId' and 'text' are required",
         Errors.MISSING_PARAMS
       );
@@ -526,19 +526,19 @@ export class TelegramAPI {
     options?: sendPollOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !question || !answer_options)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'question' and 'answer_options' are required",
         Errors.MISSING_PARAMS
       );
 
     if (typeof answer_options !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameter 'answer_options' must be an array of strings!",
         Errors.INVALID_TYPE
       );
@@ -578,13 +578,13 @@ export class TelegramAPI {
     options?: forwardMessageOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !from_chat_id || !message_id)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'from_chat_id' and 'message_id' are required",
         Errors.MISSING_PARAMS
       );
@@ -625,13 +625,13 @@ export class TelegramAPI {
     options?: copyMessageOptions
   ): Promise<IMessageId> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !from_chat_id || !message_id)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'from_chat_id' and 'message_id' are required",
         Errors.MISSING_PARAMS
       );
@@ -675,19 +675,19 @@ export class TelegramAPI {
     options?: sendPhotoOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof photo !== "string" && typeof photo !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "A photo can either be an HTTP URL or an object e.g: {file:'local path to photo'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !photo)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'photo' are required",
         Errors.MISSING_PARAMS
       );
@@ -748,19 +748,19 @@ export class TelegramAPI {
     options?: sendAudioOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof audio !== "string" && typeof audio !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "An audio can either be an HTTP URL or an object e.g: {file:'local path to audio'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !audio)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'audio' are required",
         Errors.MISSING_PARAMS
       );
@@ -821,19 +821,19 @@ export class TelegramAPI {
     options?: sendVideoOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof video !== "string" && typeof video !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "A video can either be an HTTP URL or an object e.g: {file:'local path to video'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !video)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'video' are required",
         Errors.MISSING_PARAMS
       );
@@ -895,19 +895,19 @@ export class TelegramAPI {
     options?: sendDocumentOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof document !== "string" && typeof document !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "A document can either be an HTTP URL or an object e.g: {file:'local path to document'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !document)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'document' are required",
         Errors.MISSING_PARAMS
       );
@@ -968,19 +968,19 @@ export class TelegramAPI {
     options?: sendAnimationOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof animation !== "string" && typeof animation !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "An animation can either be an HTTP URL or an object e.g: {file:'local path to animation'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !animation)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'animation' are required",
         Errors.MISSING_PARAMS
       );
@@ -1041,19 +1041,19 @@ export class TelegramAPI {
     options?: sendVoiceOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof voice !== "string" && typeof voice !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "A voice can either be an HTTP URL or an object e.g: {file:'local path to voice'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !voice)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'voice' are required",
         Errors.MISSING_PARAMS
       );
@@ -1112,19 +1112,19 @@ export class TelegramAPI {
     options?: sendVideoNoteOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (typeof videoNote !== "string" && typeof videoNote !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "A video note can either be an HTTP URL or an object e.g: {file:'local path to the video note'}",
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !videoNote)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'videoNote' are required",
         Errors.MISSING_PARAMS
       );
@@ -1231,13 +1231,13 @@ export class TelegramAPI {
     options?: sendLocationOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !latitude || !longitude)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'longitude' and 'latitude' are required",
         Errors.MISSING_PARAMS
       );
@@ -1270,7 +1270,7 @@ export class TelegramAPI {
     options?: editMessageLiveLocationOptions
   ): Promise<boolean | IMessage> {
     if (!latitude || !longitude)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'longitude' and 'latitude' are required",
         Errors.MISSING_PARAMS
       );
@@ -1339,13 +1339,13 @@ export class TelegramAPI {
     options?: sendVenueOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !latitude || !longitude || title || address)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'longitude', 'latitude', 'title' amd 'address' are required",
         Errors.MISSING_PARAMS
       );
@@ -1386,13 +1386,13 @@ export class TelegramAPI {
     options?: sendContactOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !phone_number || !first_name)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id', 'phone_number' and 'first_name' are required",
         Errors.MISSING_PARAMS
       );
@@ -1422,7 +1422,7 @@ export class TelegramAPI {
     options?: sendDiceOptions
   ): Promise<IMessage> {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
@@ -1448,13 +1448,13 @@ export class TelegramAPI {
 
   async sendChatAction(chat_id: number | string, action: ActionType) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
-      throw new ErrosController(
+      throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
         Errors.INVALID_TYPE
       );
 
     if (!chat_id || !action)
-      throw new ErrosController(
+      throw new ErrorsController(
         "The parameters 'chat_id' and 'action' are required",
         Errors.MISSING_PARAMS
       );
@@ -1482,10 +1482,12 @@ export class TelegramAPI {
     user_id: number,
     options?: getUserProfilePhotosOptions
   ): Promise<IUserProfilePhotos> {
-    if (typeof user_id !== "number")
-      throw new ErrosController(
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
         `user_id must be a number!, recieved: ${typeof user_id}`,
-        Errors.INVALID_TYPE
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
       );
 
     let params = {
@@ -1533,9 +1535,11 @@ export class TelegramAPI {
     options?: setMyCommandsOptions
   ): Promise<boolean> {
     if (!commands || typeof commands !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         `The commands parameter must be an Array of IBotCommand!, recieved ${typeof commands}`,
-        Errors.INVALID_TYPE
+        typeof commands === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
       );
 
     let params = {};
@@ -1614,10 +1618,10 @@ export class TelegramAPI {
     language_code?: string
   ) {
     if (!scope || typeof scope !== "object")
-      throw new ErrosController(
+      throw new ErrorsController(
         "The scope parameter is required and is from type object!, recieved " +
           typeof scope,
-        Errors.INVALID_TYPE
+        typeof scope === undefined ? Errors.MISSING_PARAMS : Errors.INVALID_TYPE
       );
     let params = {
       scope: JSON.stringify(scope),
@@ -1644,6 +1648,20 @@ export class TelegramAPI {
     user_id: number,
     options?: banChatMemberOptions
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id is required and must be a number, received: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1670,6 +1688,20 @@ export class TelegramAPI {
     user_id: number,
     only_if_banned?: boolean
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id is required and must be a number, received: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1696,6 +1728,20 @@ export class TelegramAPI {
     user_id: number,
     options?: restrictChatMemberOptions
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id is required and must be a number, received: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1726,6 +1772,20 @@ export class TelegramAPI {
     user_id: number,
     options?: promoteChatMemberOptions
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id is required and must be a number, received: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1756,6 +1816,28 @@ export class TelegramAPI {
     user_id: number,
     custom_title: string
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id is required and must be a number, received: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
+    if (!custom_title || typeof custom_title !== "string")
+      throw new ErrorsController(
+        `custom_title is required and must be from type string!`,
+        typeof custom_title === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1784,6 +1866,19 @@ export class TelegramAPI {
     chat_id: string | number,
     sender_chat_id: number
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!sender_chat_id || typeof sender_chat_id !== "number")
+      throw new ErrorsController(
+        `sender_chat_id is required and must be a number, received: ${typeof sender_chat_id}`,
+        typeof sender_chat_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       sender_chat_id: sender_chat_id,
@@ -1811,6 +1906,18 @@ export class TelegramAPI {
     chat_id: string | number,
     sender_chat_id: number
   ): Promise<boolean> {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!sender_chat_id || typeof sender_chat_id !== "number")
+      throw new ErrorsController(
+        `sender_chat_id is required must be a number, received: ${typeof sender_chat_id}`,
+        typeof sender_chat_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       sender_chat_id: sender_chat_id,
@@ -1838,6 +1945,24 @@ export class TelegramAPI {
     chat_id: number | string,
     permissions: IChatPermissions
   ) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (typeof permissions !== "object")
+      throw new ErrorsController(
+        `The permissions should be an object from type IChatPermissions!, recieved: ${typeof permissions}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!permissions)
+      throw new ErrorsController(
+        `The permissions parameter is required!`,
+        Errors.MISSING_PARAMS
+      );
+
     let params = {
       chat_id: chat_id,
       permissions: JSON.stringify(permissions),
@@ -1861,6 +1986,12 @@ export class TelegramAPI {
    */
 
   async exportChatInviteLink(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -1887,6 +2018,11 @@ export class TelegramAPI {
     chat_id: string | number,
     options?: createChatInviteLinkOptions
   ) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       ...options,
@@ -1916,6 +2052,18 @@ export class TelegramAPI {
     invite_link: string,
     options?: editChatInviteLinkOptions
   ) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!invite_link || typeof invite_link !== "string")
+      throw new ErrorsController(
+        `The parameter invite_link is required and must be a string!`,
+        typeof invite_link === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       invite_link: invite_link,
@@ -1941,6 +2089,18 @@ export class TelegramAPI {
    */
 
   async revokeChatInviteLink(chat_id: number | string, invite_link: string) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!invite_link || typeof invite_link !== "string")
+      throw new ErrorsController(
+        `The parameter invite_link is required and must be a string!`,
+        typeof invite_link === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       invite_link: invite_link,
@@ -1965,6 +2125,19 @@ export class TelegramAPI {
    */
 
   async approveChatJoinRequest(chat_id: string | number, user_id: number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `The parameter user_id is required and must be a number!`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -1989,6 +2162,19 @@ export class TelegramAPI {
    */
 
   async declineChatJoinRequest(chat_id: string | number, user_id: number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `The parameter user_id is required and must be a number!`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -2013,6 +2199,17 @@ export class TelegramAPI {
    */
 
   async setChatPhoto(chat_id: string | number, photo: LocalFile) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!photo || typeof photo !== "object")
+      throw new ErrorsController(
+        `The parameter photo is required and must be an object from type LocalFile!`,
+        typeof photo === undefined ? Errors.MISSING_PARAMS : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       photo: photo,
@@ -2032,6 +2229,12 @@ export class TelegramAPI {
    */
 
   async deleteChatPhoto(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -2051,6 +2254,16 @@ export class TelegramAPI {
    */
 
   async setChatTitle(chat_id: string | number, title: string) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!title || typeof title !== "string")
+      throw new ErrorsController(
+        `The parameter title is required and must be a string!`,
+        typeof title === undefined ? Errors.MISSING_PARAMS : Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       title: title,
@@ -2071,6 +2284,11 @@ export class TelegramAPI {
    */
 
   async setChatDescription(chat_id: string | number, description?: string) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       description: description,
@@ -2100,6 +2318,19 @@ export class TelegramAPI {
     message_id: number,
     disable_notification?: boolean
   ) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+    if (!message_id || typeof message_id !== "number")
+      throw new ErrorsController(
+        `The paramater message_id is required and must be a number!, recieved: ${typeof message_id}`,
+        typeof message_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       message_id: message_id,
@@ -2121,6 +2352,11 @@ export class TelegramAPI {
    */
 
   async unpinChatMessage(chat_id: string | number, message_id?: number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       message_id: message_id,
@@ -2140,6 +2376,11 @@ export class TelegramAPI {
    */
 
   async unpinAllChatMessages(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
     };
@@ -2162,6 +2403,11 @@ export class TelegramAPI {
    */
 
   async leaveChat(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
     };
@@ -2180,6 +2426,12 @@ export class TelegramAPI {
    */
 
   async getChat(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -2198,6 +2450,12 @@ export class TelegramAPI {
    */
 
   async getChatAdministrators(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -2220,6 +2478,12 @@ export class TelegramAPI {
    */
 
   async getChatMemberCount(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -2243,6 +2507,19 @@ export class TelegramAPI {
    */
 
   async getChatMember(chat_id: string | number, user_id: number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!user_id || typeof user_id !== "number")
+      throw new ErrorsController(
+        `user_id must be a number!, recieved: ${typeof user_id}`,
+        typeof user_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
     let params = {
       chat_id: chat_id,
       user_id: user_id,
@@ -2263,6 +2540,20 @@ export class TelegramAPI {
    */
 
   async setChatStickerSet(chat_id: string | number, sticker_set_name: string) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
+    if (!sticker_set_name || typeof sticker_set_name !== "string")
+      throw new ErrorsController(
+        `The paramater sticker_set_name is required and must be a string!, recieved: ${typeof sticker_set_name}`,
+        typeof sticker_set_name === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
       sticker_set_name: sticker_set_name,
@@ -2286,6 +2577,12 @@ export class TelegramAPI {
    */
 
   async deleteChatStickerSet(chat_id: string | number) {
+    if (typeof chat_id !== "string" && typeof chat_id !== "number")
+      throw new ErrorsController(
+        `chat id must be a string or a number, received: ${typeof chat_id}`,
+        Errors.INVALID_TYPE
+      );
+
     let params = {
       chat_id: chat_id,
     };
@@ -2311,6 +2608,14 @@ export class TelegramAPI {
     callback_query_id: string,
     options?: answerCallbackQueryOptions
   ) {
+    if (!callback_query_id || typeof callback_query_id !== "string")
+      throw new ErrorsController(
+        `callback_query_id is required and must be a string, received: ${typeof callback_query_id}`,
+        typeof callback_query_id === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+
     let params = {
       callback_query_id: callback_query_id,
       ...options,
@@ -2338,6 +2643,12 @@ export class TelegramAPI {
     text: string,
     options?: editMessageTextOptions
   ): Promise<boolean | IMessage> {
+    if (!text || typeof text !== "string")
+      throw new ErrorsController(
+        `text is required and must be a string, received: ${typeof text}`,
+        typeof text === undefined ? Errors.MISSING_PARAMS : Errors.INVALID_TYPE
+      );
+
     let params = {
       text: text,
       ...options,
@@ -2361,6 +2672,13 @@ export class TelegramAPI {
     caption: string,
     options?: editMessageCaptionOptions
   ) {
+    if (!caption || typeof caption !== "string")
+      throw new ErrorsController(
+        `caption is required and must be a string, received: ${typeof caption}`,
+        typeof caption === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
     let params = {
       caption: caption,
       ...options,

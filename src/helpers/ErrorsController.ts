@@ -5,7 +5,7 @@ export enum Errors {
   INVALID_EVENT = "Invalid Event",
 }
 
-export class ErrosController extends Error {
+export class ErrorsController extends Error {
   /**
    * The error message
    */
