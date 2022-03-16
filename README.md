@@ -11,6 +11,18 @@ Fast and Flexible Telegram Bot API Framework for Node.js written in TypeScript.
 - Speedy and efficient
 - Beginner friendly
 
+<!-- TOC -->
+
+- [Installation](#installation)
+- [Loading and configuring the module](#importing)
+- [Getting started](#getting-started)
+- [Events](#telegram-events)
+- [Examples](#examples)
+  - [Sending Files](#sending-files)
+  - [Inline Keyboards](#inline-keyboards)
+
+<!-- /TOC -->
+
 ## Installation
 
 ```
@@ -58,6 +70,97 @@ telegram.on("message", async (message) => {
 
 // fetch new updates from the api
 telegram.startPolling();
+```
+
+## Telegram Events
+
+Events you can listen to usign `teletron-ts`:
+
+- message
+- edited_message
+- edited_channel_post
+- channel_post
+- inline_query
+- chosen_inline_result
+- callback_query
+- shipping_query
+- poll
+- poll_answer
+- chat_join_request
+
+Please note that both `inline_query` and `chosen_inline_result` only work if you enabled this option by sending `/setinline` to `@BotFather`
+
+For more information regarding inline queries visit the telegram docs [here](https://core.telegram.org/bots/inline)
+
+## Examples
+
+### Sending Files
+
+There are 3 ways to send files. You can use the file id of a file that already exist on telegram servers, provide an HTTP URL to the file which then will be downloaded by telegram servers or upload a local file. Lets assume we want to send a photo via the bot:
+
+```ts
+import { TelegramAPI } from "teletron-ts";
+
+const telegram = new TelegramAPI("token"); // bot token
+
+telegram.on("message", async (message) => {
+  // First Method: Using an already existing file_id of a file that has been previously uploaded on telegram
+  await telegram.sendPhoto(
+    message.chat.id,
+    "AgADBQADqacxG2gbbxCWBkgvcmeAgxVPyjIABBlug37DKyhDEU0AAgI"
+  );
+
+  // Second Method: Using an HTTP photo url
+  await telegram.sendPhoto(
+    message.chat.id,
+    "https://reshape.sport1.de/c/t/85599615-c80d-47f0-9179-4375d6e4fa93/976x549"
+  );
+
+  // Thrid Method: Using a local file
+  await telegram.sendPhoto(message.chat.id, { file: "./anime.jpg" });
+});
+
+// fetch updates from the api
+telegram.startPolling();
+```
+
+### Inline Keyboards
+
+Inline keyboards are buttons that will be sent along with the message. These become especially useful if you want to wait for user input to perform certain action!
+
+```ts
+import { TelegramAPI } from "teletron-ts";
+import { IInlineKeyboardMarkup } from "teletron-ts";
+
+const telegram = new TelegramAPI("token");
+
+telegram.on("message", async (m) => {
+  const inlineKeyboards: IInlineKeyboardMarkup = {
+    inline_keyboard: [
+      [
+        { text: "Very Good!", callback_data: "vgood" },
+        { text: "Fine", callback_data: "fine" },
+      ],
+      [{ text: "Amazing", callback_data: "amazing" }],
+    ],
+  };
+
+  await telegram.sendMessage(
+    m.chat.id,
+    "Hey there, how are you feeling today?",
+    {
+      reply_markup: JSON.stringify(inlineKeyboards),
+    }
+  );
+});
+
+telegram.on("callback_query", async (query) => {
+  if (query.data && query.data === "vgood")
+    return await telegram.sendMessage(
+      query.message.chat.id,
+      "I am feeling very good today too!"
+    );
+});
 ```
 
 ## Contributions
