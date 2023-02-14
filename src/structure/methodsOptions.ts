@@ -490,7 +490,7 @@ export interface promoteChatMemberOptions {
   /**
    * Pass True, if the administrator can manage voice chats
    */
-  can_manage_voice_chats?: boolean;
+  can_manage_video_chats?: boolean;
   /**
    * Pass True, if the administrator can restrict, ban or unban chat members
    */

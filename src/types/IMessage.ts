@@ -1,3 +1,4 @@
+import { IWebAppData } from "./IWebAppData";
 import {
   IChat,
   IMessageEntity,
@@ -249,21 +250,26 @@ export interface IMessage {
   /**
    * Optional. Service message: voice chat scheduled
    */
-  voice_chat_scheduled: IVoiceChatScheduled;
+  video_chat_scheduled: IVoiceChatScheduled;
   /**
    * Optional. Service message: voice chat started
    */
-  voice_chat_started: IVoiceChatStarted;
+  video_chat_started: IVoiceChatStarted;
   /**
    * Optional. Service message: voice chat ended
    */
-  voice_chat_ended: IVoiceChatEnded;
+  video_chat_ended: IVoiceChatEnded;
   /**
    * Optional. Service message: new participants invited to a voice chat
    */
-  voice_chat_participants_invited: IVoiceChatParticipantsInvited;
+  video_chat_participants_invited: IVoiceChatParticipantsInvited;
   /**
    * Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons.
    */
   reply_markup: IInlineKeyboardMarkup;
+
+  /**
+   * Optional. Service message: data sent by a Web App
+   */
+  web_app_data?: IWebAppData;
 }

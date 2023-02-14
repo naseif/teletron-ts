@@ -1,4 +1,5 @@
 import { ICallbackGame, ILoginUrl } from "./index";
+import { IWebAppInfo } from "./IWebAppInfo";
 
 /**
  * This object represents one button of an inline keyboard. You must use exactly one of the optional fields.
@@ -38,4 +39,8 @@ export interface IInlineKeyboardButton {
    * Optional. Specify True, to send a Pay button. NOTE: This type of button must always be the first button in the first row and can only be used in invoice messages.
    */
   pay?: boolean;
+  /**
+   * Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot.
+   */
+  web_app?: IWebAppInfo;
 }

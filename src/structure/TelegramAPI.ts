@@ -1,17 +1,21 @@
 import EventEmitter from "eventemitter3";
-import needle, { NeedleHttpVerbs, NeedleOptions } from "needle";
-import mime from "mime-types";
+import axios, { AxiosRequestConfig, Method } from "axios";
 import { URLSearchParams } from "node:url";
+import { createReadStream } from "node:fs";
 import {
   IBotCommandScopeBase,
   IBotCommandScopeChat,
   IBotCommandScopeChatAdministrators,
   IBotCommandScopeChatMember,
   IChat,
+  IChatAdministratorRights,
   IChatInviteLink,
   IChatMember,
   IChatPermissions,
+  IInlineQuery,
+  IMenuButton,
   IMessage,
+  ISentWebAppMessage,
   IUpdate,
   IUpdateOptions,
   IUser,
@@ -71,6 +75,8 @@ import {
   IUserProfilePhotos,
 } from "../types";
 import { Errors, ErrorsController } from "../helpers/ErrorsController";
+import { isSerialized, prepareFormDataPayLoad, serializeJSON } from "./Utils";
+import mime from "mime-types";
 
 export class TelegramAPI {
   /**
@@ -155,28 +161,31 @@ export class TelegramAPI {
   }
 
   /**
-   * Private Method for sending post requests to the Telegram Bot API
+   * Private Method for sending requests to the Telegram Bot API
    * @param apiMethod Request Method
-   * @param url API Endpoint
+   * @param url API Endpoint URL
    * @param data the data object if the request method is "POST"
-   * @param options NeedleOptions
+   * @param options AxiosRequestConfig
    * @returns
    */
 
-  private async sendRequest(
-    apiMethod: NeedleHttpVerbs,
+  private async sendRequest<T>(
+    httpMethod: Method,
     url: string,
-    data: {},
-    options?: NeedleOptions
+    data: any,
+    requestConfig?: AxiosRequestConfig
   ) {
-    const req = await needle(apiMethod, url, data, options);
-    const res = await req.body;
-
-    if (!res.ok) {
-      this.emitter.emit("error", res);
+    try {
+      let req = await axios({
+        method: httpMethod,
+        url,
+        data: data,
+        ...requestConfig,
+      });
+      return req.data.result as T;
+    } catch (error) {
+      this.emitter.emit("error", error);
     }
-
-    return res;
   }
 
   /**
@@ -398,7 +407,7 @@ export class TelegramAPI {
   async getUpdates(options?: IUpdateOptions) {
     if (!options) {
       options = {};
-      return await this.sendRequest(
+      return await this.sendRequest<IUpdate[]>(
         "get",
         this.endpoint + "getUpdates",
         options
@@ -411,8 +420,11 @@ export class TelegramAPI {
       qs.append(key, value);
     }
 
-    return (await this.sendRequest("post", this.endpoint + "getUpdates", qs))
-      .result;
+    return await this.sendRequest<IUpdate[]>(
+      "post",
+      this.endpoint + "getUpdates",
+      qs
+    );
   }
 
   /**
@@ -448,11 +460,8 @@ export class TelegramAPI {
    * A simple method for testing your bot's authentication token. Requires no parameters. Returns basic information about the bot in form of a User object.
    * @returns IUser
    */
-  async getMe(): Promise<IUser> {
-    const fetch: IUser = await (
-      await this.sendRequest("get", this.endpoint + "getMe", {})
-    ).result;
-    return fetch;
+  async getMe() {
+    return await this.sendRequest<IUser>("get", this.endpoint + "getMe", {});
   }
 
   /**
@@ -474,7 +483,7 @@ export class TelegramAPI {
     chatId: string | number,
     text: string,
     options?: sendMessageOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chatId !== "string" && typeof chatId !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chatId}`,
@@ -493,11 +502,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendMessage", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage>(
+      "post",
+      this.endpoint + "sendMessage",
+      params
+    );
   }
 
   /**
@@ -523,7 +532,7 @@ export class TelegramAPI {
     question: string,
     answer_options: string[],
     options?: sendPollOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -549,11 +558,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendPoll", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage>(
+      "post",
+      this.endpoint + "sendPoll",
+      params
+    );
   }
 
   /**
@@ -575,7 +584,7 @@ export class TelegramAPI {
     from_chat_id: string | number,
     message_id: number,
     options?: forwardMessageOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -595,11 +604,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "forwardMessage", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage>(
+      "post",
+      this.endpoint + "forwardMessage",
+      params
+    );
   }
 
   /**
@@ -622,7 +631,7 @@ export class TelegramAPI {
     from_chat_id: string | number,
     message_id: number,
     options?: copyMessageOptions
-  ): Promise<IMessageId> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -642,11 +651,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessageId = await (
-      await this.sendRequest("post", this.endpoint + "copyMessage", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessageId>(
+      "post",
+      this.endpoint + "copyMessage",
+      params
+    );
   }
 
   /**
@@ -672,7 +681,7 @@ export class TelegramAPI {
     chat_id: string | number,
     photo: string | LocalFile,
     options?: sendPhotoOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -694,33 +703,35 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof photo !== "string" && photo.file) {
-      params = {
-        chat_id: chat_id,
-        photo: {
-          file: photo.file,
-          content_type: photo.content_type
-            ? photo.content_type
-            : mime.lookup(photo.file),
-        },
+      const stream = createReadStream(photo.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        photo: stream,
         ...options,
-      };
+      });
+
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendPhoto",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         photo: photo,
         ...options,
       };
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendPhoto",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendPhoto", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -745,7 +756,7 @@ export class TelegramAPI {
     chat_id: string | number,
     audio: string | LocalFile,
     options?: sendAudioOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -767,32 +778,37 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof audio !== "string" && audio.file) {
-      params = {
-        chat_id: chat_id,
-        audio: {
-          file: audio.file,
-          content_type: audio.content_type
-            ? audio.content_type
-            : mime.lookup(audio.file),
-        },
+      const stream = createReadStream(audio.file);
+
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        audio: stream,
         ...options,
-      };
+      });
+
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendAudio",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         audio: audio,
         ...options,
       };
+
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendAudio",
+        params
+      );
     }
-
-    let result: IMessage;
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendAudio", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -818,7 +834,7 @@ export class TelegramAPI {
     chat_id: string | number,
     video: string | LocalFile,
     options?: sendVideoOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -840,33 +856,35 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof video !== "string" && video.file) {
-      params = {
-        chat_id: chat_id,
-        video: {
-          file: video.file,
-          content_type: video.content_type
-            ? video.content_type
-            : mime.lookup(video.file),
-        },
+      const stream = createReadStream(video.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        video: stream,
         ...options,
-      };
+      });
+
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendVideo",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         video: video,
         ...options,
       };
+      return await this.sendRequest<IMessage>(
+        "POST",
+        this.endpoint + "sendVideo",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendVideo", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -892,7 +910,7 @@ export class TelegramAPI {
     chat_id: number | string,
     document: string | LocalFile,
     options?: sendDocumentOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -913,33 +931,34 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof document !== "string" && document.file) {
-      params = {
-        chat_id: chat_id,
-        document: {
-          file: document.file,
-          content_type: document.content_type
-            ? document.content_type
-            : mime.lookup(document.file),
-        },
+      const stream = createReadStream(document.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        document: stream,
         ...options,
-      };
+      });
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendDocument",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         document: document,
         ...options,
       };
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendDocument",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendDocument", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -965,7 +984,7 @@ export class TelegramAPI {
     chat_id: string | number,
     animation: string | LocalFile,
     options?: sendAnimationOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -986,33 +1005,36 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof animation !== "string" && animation.file) {
-      params = {
-        chat_id: chat_id,
-        animation: {
-          file: animation.file,
-          content_type: animation.content_type
-            ? animation.content_type
-            : mime.lookup(animation.file),
-        },
+      const stream = createReadStream(animation.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        animation: stream,
         ...options,
-      };
+      });
+
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendAnimation",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         animation: animation,
         ...options,
       };
+
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendAnimation",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendAnimation", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -1038,7 +1060,7 @@ export class TelegramAPI {
     chat_id: string | number,
     voice: string | LocalFile,
     options?: sendVoiceOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1060,33 +1082,34 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof voice !== "string" && voice.file) {
-      params = {
-        chat_id: chat_id,
-        voice: {
-          file: voice.file,
-          content_type: voice.content_type
-            ? voice.content_type
-            : mime.lookup(voice.file),
-        },
+      const stream = createReadStream(voice.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        voice: stream,
         ...options,
-      };
+      });
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendVoice",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         voice: voice,
         ...options,
       };
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendVoice",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendVoice", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -1109,7 +1132,7 @@ export class TelegramAPI {
     chat_id: string | number,
     videoNote: string | LocalFile,
     options?: sendVideoNoteOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1130,33 +1153,35 @@ export class TelegramAPI {
     let params = {};
 
     if (typeof videoNote !== "string" && videoNote.file) {
-      params = {
-        chat_id: chat_id,
-        video_note: {
-          file: videoNote.file,
-          content_type: videoNote.content_type
-            ? videoNote.content_type
-            : mime.lookup(videoNote.file),
-        },
+      const stream = createReadStream(videoNote.file);
+      const payload = prepareFormDataPayLoad({
+        chat_id,
+        video_note: stream,
         ...options,
-      };
+      });
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendVideoNote",
+        payload.form,
+        {
+          headers: {
+            ...payload.formHeaders,
+          },
+        }
+      );
     } else {
       params = {
         chat_id: chat_id,
         video_note: videoNote,
         ...options,
       };
+
+      return await this.sendRequest<IMessage>(
+        "post",
+        this.endpoint + "sendVideoNote",
+        params
+      );
     }
-
-    let result: IMessage;
-
-    result = await (
-      await this.sendRequest("post", this.endpoint + "sendVideoNote", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return result;
   }
 
   /**
@@ -1175,7 +1200,7 @@ export class TelegramAPI {
       | IInputMediaDocument[]
       | IInputMediaAudio[],
     options?: sendMediaGroupOptions
-  ): Promise<IMessage> {
+  ) {
     let params = {};
     let streams: any = [];
 
@@ -1201,13 +1226,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendMediaGroup", params, {
-        multipart: true,
-      })
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage>(
+      "post",
+      this.endpoint + "sendMediaGroup",
+      params
+    );
   }
 
   /**
@@ -1228,7 +1251,7 @@ export class TelegramAPI {
     latitude: number,
     longitude: number,
     options?: sendLocationOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1248,11 +1271,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendLocation", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest(
+      "post",
+      this.endpoint + "sendLocation",
+      params
+    );
   }
 
   /**
@@ -1267,7 +1290,7 @@ export class TelegramAPI {
     latitude: number,
     longitude: number,
     options?: editMessageLiveLocationOptions
-  ): Promise<boolean | IMessage> {
+  ) {
     if (!latitude || !longitude)
       throw new ErrorsController(
         "The parameters 'longitude' and 'latitude' are required",
@@ -1280,15 +1303,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "editMessageLiveLocation",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean | IMessage>(
+      "post",
+      this.endpoint + "editMessageLiveLocation",
+      params
+    );
   }
 
   /**
@@ -1297,22 +1316,16 @@ export class TelegramAPI {
    * @returns IMessage | boolean
    */
 
-  async stopMessageLiveLocation(
-    options?: stopMessageLiveLocationOptions
-  ): Promise<boolean | IMessage> {
+  async stopMessageLiveLocation(options?: stopMessageLiveLocationOptions) {
     let params = {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "stopMessageLiveLocation",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean | IMessage>(
+      "post",
+      this.endpoint + "stopMessageLiveLocation",
+      params
+    );
   }
 
   /**
@@ -1336,7 +1349,7 @@ export class TelegramAPI {
     title: string,
     address: string,
     options?: sendVenueOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1358,11 +1371,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendVenue", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage>(
+      "post",
+      this.endpoint + "sendVenue",
+      params
+    );
   }
 
   /**
@@ -1383,7 +1396,7 @@ export class TelegramAPI {
     phone_number: string,
     first_name: string,
     options?: sendContactOptions
-  ): Promise<IMessage> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1402,11 +1415,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendContact", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest(
+      "post",
+      this.endpoint + "sendContact",
+      params
+    );
   }
 
   /**
@@ -1416,10 +1429,7 @@ export class TelegramAPI {
    * @returns IMessage
    */
 
-  async sendDice(
-    chat_id: string | number,
-    options?: sendDiceOptions
-  ): Promise<IMessage> {
+  async sendDice(chat_id: string | number, options?: sendDiceOptions) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1431,11 +1441,7 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage = await (
-      await this.sendRequest("post", this.endpoint + "sendDice", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest("post", this.endpoint + "sendDice", params);
   }
 
   /**
@@ -1463,11 +1469,11 @@ export class TelegramAPI {
       action: action,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "sendChatAction", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest(
+      "post",
+      this.endpoint + "sendChatAction",
+      params
+    );
   }
 
   /**
@@ -1480,7 +1486,7 @@ export class TelegramAPI {
   async getUserProfilePhotos(
     user_id: number,
     options?: getUserProfilePhotosOptions
-  ): Promise<IUserProfilePhotos> {
+  ) {
     if (!user_id || typeof user_id !== "number")
       throw new ErrorsController(
         `user_id must be a number!, recieved: ${typeof user_id}`,
@@ -1494,15 +1500,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IUserProfilePhotos = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "getUserProfilePhotos",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<IUserProfilePhotos>(
+      "post",
+      this.endpoint + "getUserProfilePhotos",
+      params
+    );
   }
 
   /**
@@ -1511,14 +1513,10 @@ export class TelegramAPI {
    * @returns IFile
    */
 
-  async getFile(file_id: string): Promise<IFile> {
-    const send: IFile = await (
-      await this.sendRequest("post", this.endpoint + "getFile", {
-        file_id: file_id,
-      })
-    ).result;
-
-    return send;
+  async getFile(file_id: string) {
+    return await this.sendRequest<IFile>("post", this.endpoint + "getFile", {
+      file_id: file_id,
+    });
   }
 
   /**
@@ -1529,10 +1527,7 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async setMyCommands(
-    commands: IBotCommand[],
-    options?: setMyCommandsOptions
-  ): Promise<boolean> {
+  async setMyCommands(commands: IBotCommand[], options?: setMyCommandsOptions) {
     if (!commands || typeof commands !== "object")
       throw new ErrorsController(
         `The commands parameter must be an Array of IBotCommand!, recieved ${typeof commands}`,
@@ -1555,11 +1550,11 @@ export class TelegramAPI {
       };
     }
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "setMyCommands", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setMyCommands",
+      params
+    );
   }
 
   /**
@@ -1594,11 +1589,11 @@ export class TelegramAPI {
         params = {};
     }
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "deleteMyCommands", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "deleteMyCommands",
+      params
+    );
   }
 
   /**
@@ -1627,11 +1622,11 @@ export class TelegramAPI {
       language_code: language_code,
     };
 
-    const send: IBotCommand[] = await (
-      await this.sendRequest("post", this.endpoint + "getMyCommands", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IBotCommand[]>(
+      "post",
+      this.endpoint + "getMyCommands",
+      params
+    );
   }
 
   /**
@@ -1646,7 +1641,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     options?: banChatMemberOptions
-  ): Promise<boolean> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1667,11 +1662,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "banChatMember", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "banChatMember",
+      params
+    );
   }
 
   /**
@@ -1686,7 +1681,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     only_if_banned?: boolean
-  ): Promise<boolean> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1707,11 +1702,11 @@ export class TelegramAPI {
       only_if_banned: only_if_banned,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "unbanChatMember", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "unbanChatMember",
+      params
+    );
   }
 
   /**
@@ -1726,7 +1721,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     options?: restrictChatMemberOptions
-  ): Promise<boolean> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1747,15 +1742,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "restrictChatMember",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "restrictChatMember",
+      params
+    );
   }
 
   /**
@@ -1770,7 +1761,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     options?: promoteChatMemberOptions
-  ): Promise<boolean> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1791,15 +1782,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "promoteChatMember",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "promoteChatMember",
+      params
+    );
   }
 
   /**
@@ -1814,7 +1801,7 @@ export class TelegramAPI {
     chat_id: string | number,
     user_id: number,
     custom_title: string
-  ): Promise<boolean> {
+  ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1843,15 +1830,11 @@ export class TelegramAPI {
       custom_title: custom_title,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "setChatAdministratorCustomTitle",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatAdministratorCustomTitle",
+      params
+    );
   }
 
   /**
@@ -1861,10 +1844,7 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async banChatSenderChat(
-    chat_id: string | number,
-    sender_chat_id: number
-  ): Promise<boolean> {
+  async banChatSenderChat(chat_id: string | number, sender_chat_id: number) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1883,15 +1863,11 @@ export class TelegramAPI {
       sender_chat_id: sender_chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "banChatSenderChat",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "banChatSenderChat",
+      params
+    );
   }
 
   /**
@@ -1901,10 +1877,7 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async unbanChatSenderChat(
-    chat_id: string | number,
-    sender_chat_id: number
-  ): Promise<boolean> {
+  async unbanChatSenderChat(chat_id: string | number, sender_chat_id: number) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1922,15 +1895,11 @@ export class TelegramAPI {
       sender_chat_id: sender_chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "unbanChatSenderChat",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "unbanChatSenderChat",
+      params
+    );
   }
 
   /**
@@ -1967,15 +1936,11 @@ export class TelegramAPI {
       permissions: JSON.stringify(permissions),
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "setChatPermissions",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatPermissions",
+      params
+    );
   }
 
   /**
@@ -1995,15 +1960,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "exportChatInviteLink",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "exportChatInviteLink",
+      params
+    );
   }
 
   /**
@@ -2027,15 +1988,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IChatInviteLink = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "createChatInviteLink",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChatInviteLink>(
+      "post",
+      this.endpoint + "createChatInviteLink",
+      params
+    );
   }
 
   /**
@@ -2069,15 +2026,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IChatInviteLink = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "editChatInviteLink",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChatInviteLink>(
+      "post",
+      this.endpoint + "editChatInviteLink",
+      params
+    );
   }
 
   /**
@@ -2105,15 +2058,11 @@ export class TelegramAPI {
       invite_link: invite_link,
     };
 
-    const send: IChatInviteLink = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "revokeChatInviteLink",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChatInviteLink>(
+      "post",
+      this.endpoint + "revokeChatInviteLink",
+      params
+    );
   }
 
   /**
@@ -2142,15 +2091,11 @@ export class TelegramAPI {
       user_id: user_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "approveChatJoinRequest",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "approveChatJoinRequest",
+      params
+    );
   }
 
   /**
@@ -2179,15 +2124,11 @@ export class TelegramAPI {
       user_id: user_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "declineChatJoinRequest",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "declineChatJoinRequest",
+      params
+    );
   }
 
   /**
@@ -2214,11 +2155,11 @@ export class TelegramAPI {
       photo: photo,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "setChatPhoto", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatPhoto",
+      params
+    );
   }
 
   /**
@@ -2238,11 +2179,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "deleteChatPhoto", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "deleteChatPhoto",
+      params
+    );
   }
 
   /**
@@ -2268,11 +2209,11 @@ export class TelegramAPI {
       title: title,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "setChatTitle", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatTitle",
+      params
+    );
   }
 
   /**
@@ -2293,15 +2234,11 @@ export class TelegramAPI {
       description: description,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "setChatDescription",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatDescription",
+      params
+    );
   }
 
   /**
@@ -2336,11 +2273,11 @@ export class TelegramAPI {
       disable_notification: disable_notification,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "pinChatMessage", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "pinChatMessage",
+      params
+    );
   }
 
   /**
@@ -2361,11 +2298,11 @@ export class TelegramAPI {
       message_id: message_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "unpinChatMessage", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "unpinChatMessage",
+      params
+    );
   }
 
   /**
@@ -2384,15 +2321,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "unpinAllChatMessages",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "unpinAllChatMessages",
+      params
+    );
   }
 
   /**
@@ -2411,11 +2344,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest("post", this.endpoint + "leaveChat", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "leaveChat",
+      params
+    );
   }
 
   /**
@@ -2435,11 +2368,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: IChat = await (
-      await this.sendRequest("post", this.endpoint + "getChat", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChat>(
+      "post",
+      this.endpoint + "getChat",
+      params
+    );
   }
 
   /**
@@ -2459,15 +2392,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: IChatMember[] = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "getChatAdministrators",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChatMember[]>(
+      "post",
+      this.endpoint + "getChatAdministrators",
+      params
+    );
   }
 
   /**
@@ -2487,15 +2416,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: number = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "getChatMemberCount",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<number>(
+      "post",
+      this.endpoint + "getChatMemberCount",
+      params
+    );
   }
 
   /**
@@ -2524,11 +2449,11 @@ export class TelegramAPI {
       user_id: user_id,
     };
 
-    const send: IChatMember = await (
-      await this.sendRequest("post", this.endpoint + "getChatMember", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IChatMember>(
+      "post",
+      this.endpoint + "getChatMember",
+      params
+    );
   }
 
   /**
@@ -2558,15 +2483,11 @@ export class TelegramAPI {
       sticker_set_name: sticker_set_name,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "setChatStickerSet",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatStickerSet",
+      params
+    );
   }
 
   /**
@@ -2586,15 +2507,11 @@ export class TelegramAPI {
       chat_id: chat_id,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "deleteChatStickerSet",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "deleteChatStickerSet",
+      params
+    );
   }
 
   /**
@@ -2620,15 +2537,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "answerCallbackQuery",
-        params
-      )
-    ).result;
-
-    return send;
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "answerCallbackQuery",
+      params
+    );
   }
 
   /**
@@ -2638,10 +2551,7 @@ export class TelegramAPI {
    * @returns boolean | IMessage
    */
 
-  async editMessageText(
-    text: string,
-    options?: editMessageTextOptions
-  ): Promise<boolean | IMessage> {
+  async editMessageText(text: string, options?: editMessageTextOptions) {
     if (!text || typeof text !== "string")
       throw new ErrorsController(
         `text is required and must be a string, received: ${typeof text}`,
@@ -2653,11 +2563,11 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage | boolean = await (
-      await this.sendRequest("post", this.endpoint + "editMessageText", params)
-    ).result;
-
-    return send;
+    return await this.sendRequest<IMessage | boolean>(
+      "post",
+      this.endpoint + "editMessageText",
+      params
+    );
   }
 
   /**
@@ -2683,14 +2593,114 @@ export class TelegramAPI {
       ...options,
     };
 
-    const send: IMessage | boolean = await (
-      await this.sendRequest(
-        "post",
-        this.endpoint + "editMessageCaption",
-        params
-      )
-    ).result;
+    return await this.sendRequest<IMessage | boolean>(
+      "post",
+      this.endpoint + "editMessageCaption",
+      params
+    );
+  }
 
-    return send;
+  /**
+   * Use this method to set the result of an interaction with a Web App and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a SentWebAppMessage object is returned.
+   * @param webAppQueryId Unique identifier for the query to be answered
+   * @param result A JSON-serialized object describing the message to be sent
+   * @todo implementation
+   */
+
+  async answerWebAppQuery(webAppQueryId: string, result: IInlineQuery) {
+    const functionParams = webAppQueryId || result;
+    if (!functionParams) {
+      throw new ErrorsController(
+        `webAppQueryId or result is required and must be a string, received: ${typeof functionParams}`,
+        typeof functionParams === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+    }
+
+    let params = {
+      web_app_query_id: webAppQueryId,
+      result: serializeJSON<IInlineQuery>(result),
+    };
+
+    return await this.sendRequest<ISentWebAppMessage>(
+      "post",
+      this.endpoint + "answerWebAppQuery",
+      params
+    );
+  }
+
+  /**
+   * Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+   * @param chat_id Unique identifier for the target private chat. If not specified, default bot's menu button will be changed
+   * @param menu_button A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault
+   * @todo implementation
+   */
+  async setChatMenuButton(
+    chat_id?: string | number,
+    menu_button?: IMenuButton
+  ) {
+    let params = {
+      chat_id: chat_id,
+      menu_button: serializeJSON<IMenuButton | undefined>(menu_button),
+    };
+
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setChatMenuButton",
+      params
+    );
+  }
+
+  /**
+   * Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns MenuButton on success.
+   * @param chat_id Unique identifier for the target private chat. If not specified, default bot's menu button will be returned
+   * @todo implementation
+   */
+  async getChatMenuButton(chat_id?: string | number) {
+    let params = {
+      chat_id: chat_id,
+    };
+    return await this.sendRequest<IMenuButton>(
+      "post",
+      this.endpoint + "getChatMenuButton",
+      params
+    );
+  }
+
+  /**
+   * Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the list before adding the bot. Returns True on success.
+   * @param rights A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared.
+   * @param for_channels Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed.
+   * @todo implementation
+   */
+  async setMyDefaultAdministratorRights(
+    rights?: IChatAdministratorRights,
+    for_channels?: boolean
+  ) {
+    let params = {
+      rights: rights
+        ? serializeJSON<IChatAdministratorRights | undefined>(rights)
+        : "",
+      for_channels,
+    };
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setMyDefaultAdministratorRights",
+      params
+    );
+  }
+
+  /**
+   * Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on success.
+   * @param for_channels Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned.
+   * @todo implementation
+   */
+  async getMyDefaultAdministratorRights(for_channels?: boolean) {
+    return await this.sendRequest<IChatAdministratorRights>(
+      "post",
+      this.endpoint + "getMyDefaultAdministratorRights",
+      { for_channels }
+    );
   }
 }

@@ -74,3 +74,8 @@ export { IChatMemberMember } from "./IChatMemberMember";
 export { IChatMemberOwner } from "./IChatMemberOwner";
 export { IChatMemberRestricted } from "./IChatMemberRestricted";
 export { IChatMember } from "./IChatMember";
+export { IChatAdministratorRights } from "./IChatAdministratorRights";
+export { IMenuButton } from "./IMenuButton";
+export { ISentWebAppMessage } from "./ISentWebAppMessage";
+export { IWebAppData } from "./IWebAppData";
+export { IWebAppInfo } from "./IWebAppInfo";
