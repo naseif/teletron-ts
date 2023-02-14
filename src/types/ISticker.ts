@@ -1,4 +1,4 @@
-import { IPhotoSize, IMaskPosition } from "./index";
+import { IPhotoSize, IMaskPosition, IFile } from "./index";
 /**
  * This object represents a sticker.
  */
@@ -48,4 +48,8 @@ export interface ISticker {
    * Optional. File size in bytes
    */
   file_size?: number;
+  /**
+   * Optional. For premium regular stickers, premium animation for the sticker
+   */
+  premium_animation?: IFile;
 }

@@ -84,4 +84,13 @@ export interface IChat {
    * Optional. For supergroups, the location to which the supergroup is connected. Returned only in getChat.
    */
   location?: IChatLocation;
+
+  /**
+   * Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat.
+   */
+  join_to_send_messages: boolean;
+  /**
+   * Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat.
+   */
+  join_by_request: boolean;
 }

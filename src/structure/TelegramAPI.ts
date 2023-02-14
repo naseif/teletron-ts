@@ -13,6 +13,7 @@ import {
   IChatMember,
   IChatPermissions,
   IInlineQuery,
+  ILabeledPrice,
   IMenuButton,
   IMessage,
   ISentWebAppMessage,
@@ -75,8 +76,14 @@ import {
   IUserProfilePhotos,
 } from "../types";
 import { Errors, ErrorsController } from "../helpers/ErrorsController";
-import { isSerialized, prepareFormDataPayLoad, serializeJSON } from "./Utils";
+import {
+  isSerialized,
+  prepareFormDataPayLoad,
+  serializeJSON,
+  serializeObjectProperties,
+} from "./Utils";
 import mime from "mime-types";
+import { createInvoiceLinkOptions, setWebhookOptions } from "./methodsOptions";
 
 export class TelegramAPI {
   /**
@@ -2701,6 +2708,89 @@ export class TelegramAPI {
       "post",
       this.endpoint + "getMyDefaultAdministratorRights",
       { for_channels }
+    );
+  }
+
+  /**
+   * Use this method to create a link for an invoice. Returns the created invoice link as String on success.
+   * @param title Product name, 1-32 characters
+   * @param description Product description, 1-255 characters
+   * @param payload Bot-defined invoice payload, 1-128 bytes. This will not be displayed to the user, use for your internal processes.
+   * @param provider_token Payment provider token, obtained via BotFather
+   * @param currency Three-letter ISO 4217 currency code, see more on currencies
+   * @param prices Price breakdown, a ILabeledPrice of components (e.g. product price, tax, discount, delivery cost, delivery tax, bonus, etc.)
+   * @param options optional createInvoiceLinkOptions
+   */
+  async createInvoiceLink(
+    title: string,
+    description: string,
+    payload: string,
+    provider_token: string,
+    currency: string,
+    prices: ILabeledPrice[],
+    options?: createInvoiceLinkOptions
+  ) {
+    const functionParams =
+      title || description || payload || provider_token || currency || prices;
+
+    if (!functionParams) {
+      throw new ErrorsController(
+        `title, description, payload, provider_token, currency and prices are required, received: ${typeof functionParams}`,
+        typeof functionParams === undefined
+          ? Errors.MISSING_PARAMS
+          : Errors.INVALID_TYPE
+      );
+    }
+
+    let params = {
+      title,
+      description,
+      payload,
+      provider_token,
+      currency,
+      prices: serializeJSON(prices),
+      ...options,
+    };
+
+    return await this.sendRequest<string>(
+      "post",
+      this.endpoint + "createInvoiceLink",
+      params
+    );
+  }
+
+  /**
+   * Use this method to specify a URL and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, we will send an HTTPS POST request to the specified URL, containing a JSON-serialized Update. In case of an unsuccessful request, we will give up after a reasonable amount of attempts. Returns True on success. If you'd like to make sure that the webhook was set by you, you can specify secret data in the parameter secret_token. If specified, the request will contain a header “X-Telegram-Bot-Api-Secret-Token” with the secret token as content.
+   * @param url HTTPS URL to send updates to. Use an empty string to remove webhook integration
+   * @param options optional setWebhookOptions
+   * @returns
+   */
+
+  async setWebhook(url: string, options?: setWebhookOptions) {
+    if (!url) {
+      throw new ErrorsController(
+        `url is required, received: ${typeof url}`,
+        typeof url === undefined ? Errors.MISSING_PARAMS : Errors.INVALID_TYPE
+      );
+    }
+
+    let params = {
+      url,
+    };
+
+    if (options) {
+      let optionsSerialized =
+        serializeObjectProperties<Record<string, any>>(options);
+      params = {
+        url,
+        ...optionsSerialized,
+      };
+    }
+
+    return await this.sendRequest<boolean>(
+      "post",
+      this.endpoint + "setWebhook",
+      params
     );
   }
 }

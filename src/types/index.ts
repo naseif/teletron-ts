@@ -1,3 +1,4 @@
+export { ILabeledPrice } from "./ILabeledPrice";
 export { IAudio } from "./IAudio";
 export { ICallbackGame } from "./ICallbackGame";
 export { ICallbackQuery } from "./ICallbackQuery";

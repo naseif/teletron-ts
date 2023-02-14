@@ -12,6 +12,7 @@ import {
   IForceReply,
   IReplyKeyboardMarkup,
 } from "../types/index";
+import { LocalFile } from "./types";
 
 export interface OptionsBase {
   /**
@@ -609,4 +610,88 @@ export interface editMessageCaptionOptions {
    * A JSON-serialized object for an inline keyboard.
    */
   reply_markup?: IInlineKeyboardMarkup | string;
+}
+
+export interface createInvoiceLinkOptions {
+  max_tip_amount?: number;
+  /**
+   * A JSON-serialized array of suggested amounts of tips in the smallest units of the currency (integer, not float/double). At most 4 suggested tip amounts can be specified. The suggested tip amounts must be positive, passed in a strictly increased order and must not exceed max_tip_amount..
+   */
+  suggested_tip_amounts?: number[];
+  /**
+   * JSON-serialized data about the invoice, which will be shared with the payment provider. A detailed description of required fields should be provided by the payment provider..
+   */
+  provider_data?: string;
+  /**
+   * URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service..
+   */
+  photo_url?: string;
+  /**
+   * Photo size in bytes.
+   */
+  photo_size?: number;
+  /**
+   * Photo width.
+   */
+  photo_width?: number;
+  /**
+   * Photo height.
+   */
+  photo_height?: number;
+  /**
+   * Pass True if you require the user's full name to complete the order.
+   */
+  need_name?: boolean;
+  /**
+   * Pass True if you require the user's phone number to complete the order.
+   */
+  need_phone_number?: boolean;
+  /**
+   * Pass True if you require the user's email address to complete the order.
+   */
+  need_email?: boolean;
+  /**
+   * Pass True if you require the user's shipping address to complete the order.
+   */
+  need_shipping_address?: boolean;
+  /**
+   * Pass True if the user's phone number should be sent to the provider.
+   */
+  send_phone_number_to_provider?: boolean;
+  /**
+   * Pass True if the user's email address should be sent to the provider.
+   */
+  send_email_to_provider?: boolean;
+  /**
+   * Pass True if the final price depends on the shipping method.
+   */
+  is_flexible?: boolean;
+}
+
+export interface setWebhookOptions {
+  /**
+   * Upload your public key certificate so that the root certificate in use can be checked. See our self-signed guide for details..
+   */
+  certificate?: LocalFile;
+  /**
+   * The fixed IP address which will be used to send webhook requests instead of the IP address resolved through DNS.
+   */
+  ip_address?: string;
+  /**
+   * The maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100. Defaults to 40. Use lower values to limit the load on your bot's server, and higher values to increase your bot's throughput..
+   */
+  max_connections?: number;
+  /**
+   * A JSON-serialized list of the update types you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all update types except chat_member (default). If not specified, the previous setting will be used. Please note that this parameter doesn't affect updates created before the call to the setWebhook, so unwanted updates may be received for a short period of time.
+   */
+  allowed_updates?: string[];
+
+  /**
+   * Pass True to drop all pending updates.
+   */
+  drop_pending_updates?: boolean;
+  /**
+   * A secret token to be sent in a header “X-Telegram-Bot-Api-Secret-Token” in every webhook request, 1-256 characters. Only characters A-Z, a-z, 0-9, _ and - are allowed. The header is useful to ensure that the request comes from a webhook set by you..
+   */
+  secret_token?: string;
 }

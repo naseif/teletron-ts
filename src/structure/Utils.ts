@@ -31,3 +31,18 @@ export function serializeJSON<T>(obj: T): string {
     throw error;
   }
 }
+
+export function serializeObjectProperties<T>(obj: Record<string, any>): T {
+  const result: Record<string, any> = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+      if (typeof value === "object") {
+        result[key] = JSON.stringify(value);
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+  return result as T;
+}

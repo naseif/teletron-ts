@@ -39,4 +39,13 @@ export interface IUser {
    * Optional. True, if the bot supports inline queries. Returned only in getMe.
    */
   supports_inline_queries?: boolean;
+  /**
+   * Optional. True, if this user is a Telegram Premium user
+   */
+  is_premium?: boolean;
+
+  /**
+   * Optional. True, if this user added the bot to the attachment menu
+   */
+  added_to_attachment_menu?: boolean;
 }
