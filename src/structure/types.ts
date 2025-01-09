@@ -48,16 +48,6 @@ export interface LocalFile {
   content_type?: string;
 }
 
-/**
- * This object represents a unique message identifier.
- */
-export interface IMessageId {
-  /**
-   * Unique message identifier
-   */
-  message_id: number;
-}
-
 export interface TelegramEvents {
   message: [message: IMessage];
   edited_message: [message: IMessage];

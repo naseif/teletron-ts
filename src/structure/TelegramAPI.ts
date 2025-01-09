@@ -20,37 +20,16 @@ import {
   IUpdate,
   IUpdateOptions,
   IUser,
+  IBotCommand,
+  IFile,
+  IInputMediaAudio,
+  IInputMediaDocument,
+  IInputMediaPhoto,
+  IInputMediaVideo,
+  IUserProfilePhotos,
+  IMessageId,
 } from "../types";
-import {
-  sendMessageOptions,
-  sendPollOptions,
-  forwardMessageOptions,
-  copyMessageOptions,
-  sendPhotoOptions,
-  sendAudioOptions,
-  sendVideoOptions,
-  sendDocumentOptions,
-  sendAnimationOptions,
-  editMessageLiveLocationOptions,
-  getUserProfilePhotosOptions,
-  sendContactOptions,
-  sendDiceOptions,
-  sendLocationOptions,
-  sendMediaGroupOptions,
-  sendVenueOptions,
-  sendVoiceOptions,
-  stopMessageLiveLocationOptions,
-  sendVideoNoteOptions,
-  setMyCommandsOptions,
-  banChatMemberOptions,
-  restrictChatMemberOptions,
-  promoteChatMemberOptions,
-  createChatInviteLinkOptions,
-  editChatInviteLinkOptions,
-  answerCallbackQueryOptions,
-  editMessageTextOptions,
-  editMessageCaptionOptions,
-} from "./index";
+import * as types from "./index";
 import {
   TCallbackQueryCallback,
   TChosenInlineResultCallback,
@@ -60,21 +39,11 @@ import {
   TPollCallback,
   TPreCheckoutQueryCallback,
   TShippingQueryCallback,
-  IMessageId,
   LocalFile,
   ActionType,
   TelegramEvents,
 } from "./types";
 
-import {
-  IBotCommand,
-  IFile,
-  IInputMediaAudio,
-  IInputMediaDocument,
-  IInputMediaPhoto,
-  IInputMediaVideo,
-  IUserProfilePhotos,
-} from "../types";
 import { Errors, ErrorsController } from "../helpers/ErrorsController";
 import {
   isSerialized,
@@ -84,8 +53,10 @@ import {
 } from "./Utils";
 import mime from "mime-types";
 import { createInvoiceLinkOptions, setWebhookOptions } from "./methodsOptions";
+import { Games } from "./Games/Games";
 
 export class TelegramAPI {
+  games: Games;
   /**
    * Telegram API token
    */
@@ -165,6 +136,7 @@ export class TelegramAPI {
       );
     this.endpoint = `https://api.telegram.org/bot${this._token}/`;
     this.emitter = new EventEmitter();
+    this.games = new Games(this.endpoint);
   }
 
   /**
@@ -191,7 +163,7 @@ export class TelegramAPI {
       });
       return req.data.result as T;
     } catch (error) {
-      this.emitter.emit("error", error);
+      this.emitter.emit("error", error as unknown as Error);
     }
   }
 
@@ -335,80 +307,121 @@ export class TelegramAPI {
   }
 
   private processUpdates(updates: IUpdate[]) {
+    const updateHandlers: { [key: string]: (update: IUpdate) => void } = {
+      message: (update) =>
+        this.handleUpdate("message", update.message, this.onMessageCallback),
+      edited_message: (update) =>
+        this.handleUpdate(
+          "edited_message",
+          update.edited_message,
+          this.onEditedMessageCallback
+        ),
+      channel_post: (update) =>
+        this.handleUpdate(
+          "channel_post",
+          update.channel_post,
+          this.onChannelPostCallback
+        ),
+      edited_channel_post: (update) =>
+        this.handleUpdate(
+          "edited_channel_post",
+          update.edited_channel_post,
+          this.onEditedChannelPostCallback
+        ),
+      inline_query: (update) =>
+        this.handleUpdate(
+          "inline_query",
+          update.inline_query,
+          this.onInlineQueryCallback
+        ),
+      chosen_inline_result: (update) =>
+        this.handleUpdate(
+          "chosen_inline_result",
+          update.chosen_inline_result,
+          this.onChosenInlineResultCallback
+        ),
+      callback_query: (update) =>
+        this.handleUpdate(
+          "callback_query",
+          update.callback_query,
+          this.onCallbackQueryCallback
+        ),
+      shipping_query: (update) =>
+        this.handleUpdate(
+          "shipping_query",
+          update.shipping_query,
+          this.onShippingQueryCallback
+        ),
+      pre_checkout_query: (update) =>
+        this.handleUpdate(
+          "pre_checkout_query",
+          update.pre_checkout_query,
+          this.onPreCheckoutQueryCallback
+        ),
+      poll: (update) =>
+        this.handleUpdate("poll", update.poll, this.onPollCallback),
+      poll_answer: (update) =>
+        this.handleUpdate(
+          "poll_answer",
+          update.poll_answer,
+          this.onPollAnswerCallback
+        ),
+      chat_join_request: (update) =>
+        this.handleUpdate("chat_join_request", update.chat_join_request),
+      business_connection: (update) =>
+        this.handleUpdate("business_connection", update.business_connection),
+      business_message: (update) =>
+        this.handleUpdate("business_message", update.business_message),
+      purchased_paid_media: (update) =>
+        this.handleUpdate("purchased_paid_media", update.purchased_paid_media),
+      my_chat_member: (update) =>
+        this.handleUpdate("my_chat_member", update.my_chat_member),
+      chat_member: (update) =>
+        this.handleUpdate("chat_member", update.chat_member),
+      chat_boost: (update) =>
+        this.handleUpdate("chat_boost", update.chat_boost),
+      removed_chat_boost: (update) =>
+        this.handleUpdate("removed_chat_boost", update.removed_chat_boost),
+      edited_business_message: (update) =>
+        this.handleUpdate(
+          "edited_business_message",
+          update.edited_business_message
+        ),
+      deleted_business_messages: (update) =>
+        this.handleUpdate(
+          "deleted_business_messages",
+          update.deleted_business_messages
+        ),
+      message_reaction: (update) =>
+        this.handleUpdate("message_reaction", update.message_reaction),
+      message_reaction_count: (update) =>
+        this.handleUpdate(
+          "message_reaction_count",
+          update.message_reaction_count
+        ),
+    };
+
     updates.forEach((update) => {
       this.offset = update.update_id + 1;
-      let message: IMessage = update.message;
-      let editedMessage = update.edited_message;
-      let channelPost = update.channel_post;
-      let editedChannelPost = update.edited_channel_post;
-      let inlineQuery = update.inline_query;
-      let chosenInlineResult = update.chosen_inline_result;
-      let callbackQuery = update.callback_query;
-      let shippingQuery = update.shipping_query;
-      let preCheckoutQuery = update.pre_checkout_query;
-      let pollQuery = update.poll;
-      let pollAnswerQuery = update.poll_answer;
-      let chatJoinReq = update.chat_join_request;
-
-      if (message) {
-        this.emitter.emit("message", message);
-        if (this.onMessageCallback !== undefined) {
-          this.onMessageCallback(message);
+      Object.keys(updateHandlers).forEach((key) => {
+        if (update[key as keyof IUpdate]) {
+          updateHandlers[key](update);
         }
-      } else if (editedMessage) {
-        this.emitter.emit("edited_message", editedMessage);
-        if (this.onEditedMessageCallback !== undefined) {
-          this.onEditedMessageCallback(editedMessage);
-        }
-      } else if (channelPost) {
-        this.emitter.emit("channel_post", channelPost);
-        if (this.onChannelPostCallback !== undefined) {
-          this.onChannelPostCallback(channelPost);
-        }
-      } else if (editedChannelPost) {
-        this.emitter.emit("edited_channel_post", editedChannelPost);
-        if (this.onEditedChannelPostCallback !== undefined) {
-          this.onEditedChannelPostCallback(editedChannelPost);
-        }
-      } else if (callbackQuery) {
-        this.emitter.emit("callback_query", callbackQuery);
-        if (this.onCallbackQueryCallback !== undefined) {
-          this.onCallbackQueryCallback(callbackQuery);
-        }
-      } else if (inlineQuery) {
-        this.emitter.emit("inline_query", inlineQuery);
-        if (this.onInlineQueryCallback !== undefined) {
-          this.onInlineQueryCallback(inlineQuery);
-        }
-      } else if (chosenInlineResult) {
-        this.emitter.emit("chosen_inline_result", chosenInlineResult);
-        if (this.onChosenInlineResultCallback !== undefined) {
-          this.onChosenInlineResultCallback(chosenInlineResult);
-        }
-      } else if (shippingQuery) {
-        this.emitter.emit("shipping_query", shippingQuery);
-        if (this.onShippingQueryCallback !== undefined) {
-          this.onShippingQueryCallback(shippingQuery);
-        }
-      } else if (preCheckoutQuery) {
-        this.emitter.emit("pre_checkout_query", preCheckoutQuery);
-        if (this.onPreCheckoutQueryCallback !== undefined) {
-          this.onPreCheckoutQueryCallback(preCheckoutQuery);
-        }
-      } else if (pollQuery) {
-        this.emitter.emit("poll", pollQuery);
-        if (this.onPollCallback !== undefined) {
-          this.onPollCallback(pollQuery);
-        }
-      } else if (pollAnswerQuery) {
-        this.emitter.emit("poll_answer", pollAnswerQuery);
-        if (this.onPollAnswerCallback !== undefined) {
-          this.onPollAnswerCallback(pollAnswerQuery);
-        }
-      } else if (chatJoinReq) {
-        this.emitter.emit("chat_join_request", chatJoinReq);
-      }
+      });
     });
+  }
+
+  private handleUpdate(
+    event: string,
+    data: any,
+    callback?: (data: any) => void
+  ) {
+    if (data) {
+      this.emitter.emit(event, data);
+      if (callback) {
+        callback(data);
+      }
+    }
   }
 
   async getUpdates(options?: IUpdateOptions) {
@@ -489,7 +502,7 @@ export class TelegramAPI {
   async sendMessage(
     chatId: string | number,
     text: string,
-    options?: sendMessageOptions
+    options?: types.sendMessageOptions
   ) {
     if (typeof chatId !== "string" && typeof chatId !== "number")
       throw new ErrorsController(
@@ -538,7 +551,7 @@ export class TelegramAPI {
     chat_id: string | number,
     question: string,
     answer_options: string[],
-    options?: sendPollOptions
+    options?: types.sendPollOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -590,7 +603,7 @@ export class TelegramAPI {
     chat_id: string | number,
     from_chat_id: string | number,
     message_id: number,
-    options?: forwardMessageOptions
+    options?: types.forwardMessageOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -637,7 +650,7 @@ export class TelegramAPI {
     chat_id: string | number,
     from_chat_id: string | number,
     message_id: number,
-    options?: copyMessageOptions
+    options?: types.copyMessageOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -687,7 +700,7 @@ export class TelegramAPI {
   async sendPhoto(
     chat_id: string | number,
     photo: string | LocalFile,
-    options?: sendPhotoOptions
+    options?: types.sendPhotoOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -762,7 +775,7 @@ export class TelegramAPI {
   async sendAudio(
     chat_id: string | number,
     audio: string | LocalFile,
-    options?: sendAudioOptions
+    options?: types.sendAudioOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -840,7 +853,7 @@ export class TelegramAPI {
   async sendVideo(
     chat_id: string | number,
     video: string | LocalFile,
-    options?: sendVideoOptions
+    options?: types.sendVideoOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -916,7 +929,7 @@ export class TelegramAPI {
   async sendDocument(
     chat_id: number | string,
     document: string | LocalFile,
-    options?: sendDocumentOptions
+    options?: types.sendDocumentOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -990,7 +1003,7 @@ export class TelegramAPI {
   async sendAnimation(
     chat_id: string | number,
     animation: string | LocalFile,
-    options?: sendAnimationOptions
+    options?: types.sendAnimationOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1066,7 +1079,7 @@ export class TelegramAPI {
   async sendVoice(
     chat_id: string | number,
     voice: string | LocalFile,
-    options?: sendVoiceOptions
+    options?: types.sendVoiceOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1138,7 +1151,7 @@ export class TelegramAPI {
   async sendVideoNote(
     chat_id: string | number,
     videoNote: string | LocalFile,
-    options?: sendVideoNoteOptions
+    options?: types.sendVideoNoteOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1206,7 +1219,7 @@ export class TelegramAPI {
       | IInputMediaPhoto[]
       | IInputMediaDocument[]
       | IInputMediaAudio[],
-    options?: sendMediaGroupOptions
+    options?: types.sendMediaGroupOptions
   ) {
     let params = {};
     let streams: any = [];
@@ -1257,7 +1270,7 @@ export class TelegramAPI {
     chat_id: string | number,
     latitude: number,
     longitude: number,
-    options?: sendLocationOptions
+    options?: types.sendLocationOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1296,7 +1309,7 @@ export class TelegramAPI {
   async editMessageLiveLocation(
     latitude: number,
     longitude: number,
-    options?: editMessageLiveLocationOptions
+    options?: types.editMessageLiveLocationOptions
   ) {
     if (!latitude || !longitude)
       throw new ErrorsController(
@@ -1323,7 +1336,9 @@ export class TelegramAPI {
    * @returns IMessage | boolean
    */
 
-  async stopMessageLiveLocation(options?: stopMessageLiveLocationOptions) {
+  async stopMessageLiveLocation(
+    options?: types.stopMessageLiveLocationOptions
+  ) {
     let params = {
       ...options,
     };
@@ -1355,7 +1370,7 @@ export class TelegramAPI {
     longitude: number,
     title: string,
     address: string,
-    options?: sendVenueOptions
+    options?: types.sendVenueOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1402,7 +1417,7 @@ export class TelegramAPI {
     chat_id: string | number,
     phone_number: string,
     first_name: string,
-    options?: sendContactOptions
+    options?: types.sendContactOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1436,7 +1451,7 @@ export class TelegramAPI {
    * @returns IMessage
    */
 
-  async sendDice(chat_id: string | number, options?: sendDiceOptions) {
+  async sendDice(chat_id: string | number, options?: types.sendDiceOptions) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
         `chat id must be a string or a number, received: ${typeof chat_id}`,
@@ -1492,7 +1507,7 @@ export class TelegramAPI {
 
   async getUserProfilePhotos(
     user_id: number,
-    options?: getUserProfilePhotosOptions
+    options?: types.getUserProfilePhotosOptions
   ) {
     if (!user_id || typeof user_id !== "number")
       throw new ErrorsController(
@@ -1534,7 +1549,10 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async setMyCommands(commands: IBotCommand[], options?: setMyCommandsOptions) {
+  async setMyCommands(
+    commands: IBotCommand[],
+    options?: types.setMyCommandsOptions
+  ) {
     if (!commands || typeof commands !== "object")
       throw new ErrorsController(
         `The commands parameter must be an Array of IBotCommand!, recieved ${typeof commands}`,
@@ -1570,7 +1588,7 @@ export class TelegramAPI {
    * @returns boolean
    */
 
-  async deleteMyCommands(options?: setMyCommandsOptions) {
+  async deleteMyCommands(options?: types.setMyCommandsOptions) {
     let params = {};
 
     switch (options) {
@@ -1647,7 +1665,7 @@ export class TelegramAPI {
   async banChatMember(
     chat_id: string | number,
     user_id: number,
-    options?: banChatMemberOptions
+    options?: types.banChatMemberOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1727,7 +1745,7 @@ export class TelegramAPI {
   async restrictChatMember(
     chat_id: string | number,
     user_id: number,
-    options?: restrictChatMemberOptions
+    options?: types.restrictChatMemberOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1767,7 +1785,7 @@ export class TelegramAPI {
   async promoteChatMember(
     chat_id: string | number,
     user_id: number,
-    options?: promoteChatMemberOptions
+    options?: types.promoteChatMemberOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -1983,7 +2001,7 @@ export class TelegramAPI {
 
   async createChatInviteLink(
     chat_id: string | number,
-    options?: createChatInviteLinkOptions
+    options?: types.createChatInviteLinkOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -2013,7 +2031,7 @@ export class TelegramAPI {
   async editChatInviteLink(
     chat_id: number | string,
     invite_link: string,
-    options?: editChatInviteLinkOptions
+    options?: types.editChatInviteLinkOptions
   ) {
     if (typeof chat_id !== "string" && typeof chat_id !== "number")
       throw new ErrorsController(
@@ -2529,7 +2547,7 @@ export class TelegramAPI {
 
   async answerCallbackQuery(
     callback_query_id: string,
-    options?: answerCallbackQueryOptions
+    options?: types.answerCallbackQueryOptions
   ) {
     if (!callback_query_id || typeof callback_query_id !== "string")
       throw new ErrorsController(
@@ -2558,7 +2576,7 @@ export class TelegramAPI {
    * @returns boolean | IMessage
    */
 
-  async editMessageText(text: string, options?: editMessageTextOptions) {
+  async editMessageText(text: string, options?: types.editMessageTextOptions) {
     if (!text || typeof text !== "string")
       throw new ErrorsController(
         `text is required and must be a string, received: ${typeof text}`,
@@ -2586,7 +2604,7 @@ export class TelegramAPI {
 
   async editMessageCaption(
     caption: string,
-    options?: editMessageCaptionOptions
+    options?: types.editMessageCaptionOptions
   ) {
     if (!caption || typeof caption !== "string")
       throw new ErrorsController(
