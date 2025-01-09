@@ -16,3 +16,5 @@ export * from "./IChatShared";
 export * from "./IChatMemberUpdated";
 export * from "./IChatBoostUpdated";
 export * from "./IChatBoostRemoved";
+export * from "./IChatBoost";
+export * from "./IChatBoostSource";

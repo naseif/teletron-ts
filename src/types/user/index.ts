@@ -6,3 +6,4 @@ export * from "./IBusinessOpeningHoursInterval";
 export * from "./ISharedUser";
 export * from "./IUserProfilePhotos";
 export * from "./IUserShared";
+export * from "./IBusinessConnection";
